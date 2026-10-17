@@ -1,0 +1,15 @@
+    <app-modal [title]="village() ? 'Modifier le village' : 'Nouveau village'" size="sm" (closed)="closed.emit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" id="village-form" class="field">
+        <label class="field-label" for="nom">Nom du village<span class="required">*</span></label>
+        <input id="nom" type="text" class="input" [class.invalid]="form.controls.nom.invalid && form.controls.nom.touched" formControlName="nom" placeholder="Ex: Kindia" />
+        @if (form.controls.nom.invalid && form.controls.nom.touched) {
+          <p class="field-error">Le nom du village est requis.</p>
+        }
+      </form>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        <button type="submit" form="village-form" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </app-modal>

@@ -1,0 +1,66 @@
+    <div class="page" style="max-width: 640px;">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Mon profil</h2>
+          <p class="page-subtitle">Vos informations personnelles et vos accès.</p>
+        </div>
+      </div>
+
+      @if (user(); as u) {
+        <div class="card card-pad" style="margin-bottom: 20px;">
+          <div class="profil-meta-row">
+            <span class="profil-meta-label">Rôles</span>
+            <span class="profil-roles">
+              @for (role of u.roles; track role.id) {
+                <span class="badge badge-info">{{ role.nom }}</span>
+              }
+            </span>
+          </div>
+          @if (u.village) {
+            <div class="profil-meta-row">
+              <span class="profil-meta-label">Village</span>
+              <span>{{ u.village.nom }}</span>
+            </div>
+          }
+          @if (u.villagesGeres.length > 0) {
+            <div class="profil-meta-row">
+              <span class="profil-meta-label">Villages gérés</span>
+              <span>{{ villagesGeresLabel() }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="card card-pad">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="stack" style="gap: 16px;">
+            <div class="form-grid">
+              <div class="field">
+                <label class="field-label" for="nom">Nom<span class="required">*</span></label>
+                <input id="nom" type="text" class="input" formControlName="nom" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="prenom">Prénom<span class="required">*</span></label>
+                <input id="prenom" type="text" class="input" formControlName="prenom" />
+              </div>
+              <div class="field field-full">
+                <label class="field-label" for="telephone">Téléphone<span class="required">*</span></label>
+                <input id="telephone" type="tel" class="input" formControlName="telephone" />
+              </div>
+              <div class="field field-full">
+                <label class="field-label" for="motDePasse">Mot de passe</label>
+                <input id="motDePasse" type="password" class="input" formControlName="motDePasse" placeholder="Laisser vide pour ne pas changer" />
+                <p class="field-hint">
+                  Laissez ce champ vide pour conserver votre mot de passe actuel. Si vous modifiez votre numéro de
+                  téléphone, votre mot de passe sera automatiquement réinitialisé sur ce nouveau numéro.
+                </p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving()">
+                {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+    </div>

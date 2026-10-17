@@ -1,0 +1,42 @@
+    <div class="autocomplete" (keydown)="onKeydown($event)">
+      <input
+        type="text"
+        class="input"
+        [id]="inputId()"
+        [placeholder]="placeholder()"
+        [value]="searchTerm()"
+        [disabled]="disabled()"
+        role="combobox"
+        aria-autocomplete="list"
+        [attr.aria-expanded]="open()"
+        autocomplete="off"
+        (input)="onInput($any($event.target).value)"
+        (focus)="onFocus()"
+        (blur)="onBlur()"
+      />
+      <app-icon name="chevron-down" [size]="16" class="autocomplete-caret" />
+
+      @if (open()) {
+        <div class="autocomplete-panel" (mousedown)="$event.preventDefault()">
+          @if (filteredOptions().length === 0) {
+            <p class="autocomplete-empty">{{ emptyLabel() }}</p>
+          } @else {
+            <ul class="autocomplete-list" role="listbox">
+              @for (option of filteredOptions(); track option.value; let i = $index) {
+                <li
+                  role="option"
+                  [attr.aria-selected]="option.value === selectedValue()"
+                  class="autocomplete-option"
+                  [class.highlighted]="i === highlightedIndex()"
+                  [class.selected]="option.value === selectedValue()"
+                  (click)="select(option)"
+                  (mouseenter)="highlightedIndex.set(i)"
+                >
+                  {{ option.label }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>

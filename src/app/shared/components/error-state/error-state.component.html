@@ -1,0 +1,11 @@
+    <div class="error-state">
+      <div class="error-state-icon">
+        <app-icon name="alert-circle" [size]="26" />
+      </div>
+      <p class="error-state-title">{{ title() }}</p>
+      <p class="error-state-description">{{ description() }}</p>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="retry.emit()">
+        <app-icon name="refresh-cw" [size]="15" />
+        Réessayer
+      </button>
+    </div>

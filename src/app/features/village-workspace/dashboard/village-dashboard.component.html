@@ -1,0 +1,56 @@
+    @if (loading()) {
+      <div class="grid-kpi">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="card card-pad" style="height: 90px;"><app-skeleton [rows]="1" [cols]="1" /></div>
+        }
+      </div>
+    } @else if (error()) {
+      <div class="card"><app-error-state (retry)="load()" /></div>
+    } @else if (stats(); as s) {
+      <p class="section-label">{{ periodeCourante(s) }}</p>
+      <div class="grid-kpi">
+        <app-stat-card label="Membres" [value]="s.nombreMembres.toString()" icon="users" tone="primary" />
+        <app-stat-card label="À jour ce mois" [value]="s.nombreMembresAJourMoisCourant.toString()" icon="check-circle" tone="success" />
+        <app-stat-card label="En retard ce mois" [value]="s.nombreMembresEnRetardMoisCourant.toString()" icon="alert-triangle" tone="warning" />
+        <app-stat-card label="Taux de présence" [value]="tauxArrondi(s)" icon="clipboard-check" tone="primary" />
+      </div>
+
+      <p class="section-label">Cotisations &amp; pénalités</p>
+      <div class="grid-kpi">
+        <app-stat-card label="Collecté ce mois" [value]="montant(s.montantCollecteMoisCourant)" icon="wallet" tone="success" />
+        <app-stat-card label="Collecté au total" [value]="montant(s.montantTotalCollecte)" icon="wallet" tone="primary" />
+        <app-stat-card
+          label="Pénalités impayées"
+          [value]="s.nombrePenalitesNonPayees.toString()"
+          icon="alert-triangle"
+          tone="danger"
+          [hint]="montant(s.montantTotalPenalitesNonPayees)"
+        />
+        <app-stat-card
+          label="Cotisation mensuelle"
+          [value]="s.montantCotisationMensuelle !== null ? montant(s.montantCotisationMensuelle) : 'Non configurée'"
+          icon="sliders"
+          tone="primary"
+        />
+      </div>
+
+      <p class="section-label">Réunions</p>
+      <div class="card card-pad reunion-card">
+        <div class="reunion-icon">
+          <app-icon name="calendar" [size]="20" />
+        </div>
+        <div class="reunion-body">
+          @if (s.prochaineReunion; as r) {
+            <p class="reunion-title">Prochaine réunion</p>
+            <p class="reunion-detail">{{ dateTime(r.dateHeure) }} — {{ r.lieu }}</p>
+          } @else {
+            <p class="reunion-title">Aucune réunion à venir</p>
+            <p class="reunion-detail">{{ s.nombreReunions }} réunion(s) organisée(s) au total dans ce village.</p>
+          }
+        </div>
+        <a class="btn btn-secondary btn-sm" routerLink="../reunions">
+          <app-icon name="clipboard-check" [size]="14" />
+          Voir les présences
+        </a>
+      </div>
+    }

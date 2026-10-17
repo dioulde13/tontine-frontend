@@ -1,0 +1,153 @@
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Mes cotisations</h2>
+          <p class="page-subtitle">Ce que vous avez payé, ce qu'il vous reste à payer et vos pénalités.</p>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="grid-kpi">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="card card-pad" style="height: 90px;"><app-skeleton [rows]="1" [cols]="1" /></div>
+          }
+        </div>
+      } @else if (error()) {
+        <div class="card"><app-error-state (retry)="load()" /></div>
+      } @else if (sansVillage()) {
+        <div class="card card-pad membre-info-card">
+          <div class="membre-info-icon">
+            <app-icon name="alert-circle" [size]="20" />
+          </div>
+          <div>
+            <p class="membre-info-title">Aucun village rattaché à votre compte</p>
+            <p class="membre-info-text">
+              Votre profil n'est pas encore associé à un village, donc cette page n'est pas disponible.
+              Contactez l'administrateur ou le président qui gère votre village.
+            </p>
+          </div>
+        </div>
+      } @else if (data(); as d) {
+        <div class="filter-card">
+          <div class="filter-field">
+            <label class="filter-label" for="annee">Année</label>
+            <select id="annee" class="select" [value]="annee()" (change)="onAnnee($event)">
+              @for (a of anneesDisponibles(); track a) {
+                <option [value]="a">{{ a }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-kpi">
+          <app-stat-card label="Total payé" [value]="montant(montantTotalPayeAnnee())" icon="wallet" tone="success" [hint]="paiementsAnnee().length + ' paiement(s)'" />
+          <app-stat-card
+            label="Reste à payer"
+            [value]="montant(d.montantTotalDu)"
+            icon="alert-triangle"
+            [tone]="d.moisImpayes.length > 0 ? 'warning' : 'success'"
+            [hint]="d.moisImpayes.length + ' mois en attente'"
+          />
+          <app-stat-card
+            label="Pénalités non payées"
+            [value]="montant(montantTotalPenalitesNonPayeesAnnee())"
+            icon="shield"
+            tone="danger"
+            [hint]="penalitesAnnee().length + ' pénalité(s) en ' + annee()"
+          />
+        </div>
+
+        <p class="section-label">Mois en attente de paiement — {{ annee() }}</p>
+        @if (d.montantCotisationMensuelle === null) {
+          <div class="card card-pad">
+            <p class="table-cell-muted">Montant de la cotisation non encore configuré par votre président.</p>
+          </div>
+        } @else if (d.moisImpayes.length === 0) {
+          <div class="table-wrap">
+            <app-empty-state icon="check-circle" [title]="'Vous êtes à jour sur toute l\'année ' + annee()" />
+          </div>
+        } @else {
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Période</th>
+                  <th>Montant dû</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (m of d.moisImpayes; track m.mois + '-' + m.annee) {
+                  <tr>
+                    <td data-label="Période" style="font-weight: 600;">{{ periodeLabel(m.mois, m.annee) }}</td>
+                    <td data-label="Montant dû" class="font-mono">{{ montant(m.montant) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        <p class="section-label">Historique de mes paiements — {{ annee() }}</p>
+        @if (paiementsAnnee().length === 0) {
+          <div class="table-wrap">
+            <app-empty-state icon="wallet" [title]="'Aucun paiement enregistré en ' + annee()" />
+          </div>
+        } @else {
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Période</th>
+                  <th>Montant</th>
+                  <th>Date de paiement</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of paiementsAnnee(); track p.id) {
+                  <tr>
+                    <td data-label="Période" style="font-weight: 600;">{{ periodeLabel(p.mois, p.annee) }}</td>
+                    <td data-label="Montant" class="font-mono">{{ montant(p.montant) }}</td>
+                    <td data-label="Date de paiement" class="table-cell-muted">{{ date(p.datePaiement) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        <p class="section-label">Mes pénalités — {{ annee() }}</p>
+        @if (penalitesAnnee().length === 0) {
+          <div class="table-wrap">
+            <app-empty-state icon="shield" [title]="'Aucune pénalité enregistrée en ' + annee()" />
+          </div>
+        } @else {
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Motif</th>
+                  <th>Montant</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of penalitesAnnee(); track p.id) {
+                  <tr>
+                    <td data-label="Motif" class="table-cell-stack">
+                      <div class="cell-stack">
+                        <span class="cell-title">{{ typeLabel(p) }}</span>
+                        <span class="cell-meta">{{ motif(p) }}</span>
+                      </div>
+                    </td>
+                    <td data-label="Montant" class="font-mono">{{ montant(p.montant) }}</td>
+                    <td data-label="Date" class="table-cell-muted">{{ date(p.date) }}</td>
+                    <td data-label="Statut"><app-badge [text]="p.statut === 'PAYEE' ? 'Payée' : 'Non payée'" [variant]="statutVariant(p)" /></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+    </div>

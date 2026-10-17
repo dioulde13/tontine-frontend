@@ -1,0 +1,11 @@
+    <div class="toast-container">
+      @for (toast of notifications.toasts(); track toast.id) {
+        <div class="toast" [class]="'toast-' + toast.variant">
+          <app-icon [name]="iconFor(toast.variant)" [size]="18" />
+          <p class="toast-message">{{ toast.message }}</p>
+          <button type="button" class="toast-close" (click)="notifications.dismiss(toast.id)" aria-label="Fermer">
+            <app-icon name="x" [size]="14" />
+          </button>
+        </div>
+      }
+    </div>

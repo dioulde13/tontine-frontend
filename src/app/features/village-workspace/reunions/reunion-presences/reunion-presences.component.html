@@ -1,0 +1,121 @@
+    <a [routerLink]="['../..']" class="workspace-back-link">
+      <app-icon name="arrow-left" [size]="14" />
+      Retour aux réunions
+    </a>
+
+    @if (reunion(); as r) {
+      <div class="page-header" style="margin-top: 8px;">
+        <div>
+          <h3 class="presences-title">Réunion du {{ dateTime(r.dateHeure) }}</h3>
+          <p class="page-subtitle">{{ r.lieu }}</p>
+        </div>
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="table-wrap"><app-skeleton [rows]="6" [cols]="3" /></div>
+    } @else if (error()) {
+      <div class="table-wrap"><app-error-state (retry)="load()" /></div>
+    } @else {
+      <div class="tab-header">
+        <span class="page-meta">
+          <strong>{{ membres().length }}</strong> membre(s) ·
+          <span class="text-success">{{ presents().length }} présent(s)</span> ·
+          <span class="text-danger">{{ absents().length }} absent(s)</span> ·
+          {{ nonMarquesCount() }} non marqué(s)
+        </span>
+      </div>
+
+      <div class="filter-card">
+        <div class="filter-field">
+          <label class="filter-label" for="search">Rechercher</label>
+          <div class="filter-search">
+            <app-icon name="search" [size]="16" class="icon" />
+            <input id="search" type="search" class="input" placeholder="Nom du membre…" [value]="search()" (input)="onSearch($event)" />
+          </div>
+        </div>
+        <div class="filter-field">
+          <label class="filter-label" for="statut">Statut</label>
+          <select id="statut" class="select" [value]="filtreStatut()" (change)="onFiltreStatut($event)">
+            <option value="TOUS">Tous les statuts</option>
+            <option value="PRESENT">Présents</option>
+            <option value="ABSENT">Absents</option>
+            <option value="NON_MARQUE">Non marqués</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <button type="button" class="btn btn-secondary" (click)="resetFiltres()">
+            <app-icon name="refresh-cw" [size]="14" />
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+
+      @if (filtered().length === 0) {
+        <div class="table-wrap">
+          <app-empty-state
+            icon="users"
+            [title]="search() || filtreStatut() !== 'TOUS' ? 'Aucun membre ne correspond aux filtres' : 'Aucun membre dans ce village'"
+            [actionLabel]="search() || filtreStatut() !== 'TOUS' ? 'Réinitialiser les filtres' : null"
+            (action)="resetFiltres()"
+          />
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Membre</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ligne of paged(); track ligne.membre.id) {
+                <tr>
+                  <td data-label="Membre" style="font-weight: 600;">{{ nomComplet(ligne.membre) }}</td>
+                  <td data-label="Statut"><app-badge [text]="statutLabel(ligne)" [variant]="statutVariant(ligne)" /></td>
+                  <td>
+                    <div class="table-actions">
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-icon btn-sm"
+                        [disabled]="ligne.presence?.present === true"
+                        (click)="demanderConfirmation(ligne.membre, true)"
+                        aria-label="Marquer présent"
+                        title="Marquer présent"
+                      >
+                        <app-icon name="check-circle" [size]="16" />
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-ghost btn-icon btn-sm"
+                        [disabled]="ligne.presence?.present === false"
+                        (click)="demanderConfirmation(ligne.membre, false)"
+                        aria-label="Marquer absent"
+                        title="Marquer absent"
+                      >
+                        <app-icon name="x-circle" [size]="16" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <app-pagination [page]="page()" [pageSize]="PAGE_SIZE" [totalItems]="filtered().length" (pageChange)="page.set($event)" />
+        </div>
+      }
+    }
+
+    @if (aConfirmer()) {
+      <app-confirm-dialog
+        [title]="confirmTitle()"
+        [message]="confirmMessage()"
+        [confirmLabel]="confirmTitle()"
+        [danger]="false"
+        [loading]="confirmation()"
+        (cancelled)="annulerConfirmation()"
+        (confirmed)="confirmer()"
+      />
+    }

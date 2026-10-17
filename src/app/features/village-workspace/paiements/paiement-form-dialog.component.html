@@ -1,0 +1,67 @@
+    <app-modal title="Nouveau paiement" size="md" (closed)="closed.emit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" id="paiement-form" class="stack" style="gap: 16px;">
+        <div class="field">
+          <label class="field-label" for="utilisateurId">Membre<span class="required">*</span></label>
+          <app-autocomplete-select
+            inputId="utilisateurId"
+            placeholder="Rechercher un membre…"
+            [options]="membreOptions()"
+            formControlName="utilisateurId"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="annee">Année<span class="required">*</span></label>
+          <input id="annee" type="number" class="input" formControlName="annee" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Mois à régler<span class="required">*</span></label>
+          <div class="mois-grid">
+            @for (mois of tousLesMois; track mois) {
+              @if (estDejaPaye(mois)) {
+                <span class="checkbox-row mois-paye" title="Déjà payé">
+                  <app-icon name="check-circle" [size]="16" />
+                  {{ moisLabel(mois) }}
+                </span>
+              } @else {
+                <label class="checkbox-row">
+                  <input type="checkbox" [checked]="moisSelectionnes().has(mois)" (change)="toggleMois(mois)" />
+                  {{ moisLabel(mois) }}
+                </label>
+              }
+            }
+          </div>
+          @if (moisSelectionnes().size === 0 && submitted()) {
+            <p class="field-error">Sélectionnez au moins un mois.</p>
+          }
+        </div>
+
+        @if (auMoinsUnMoisEnRetard()) {
+          <div class="field">
+            <label class="field-label">Pénalité de retard</label>
+            <label class="checkbox-row">
+              <input
+                type="checkbox"
+                [checked]="appliquerPenaliteRetard()"
+                (change)="appliquerPenaliteRetard.set(!appliquerPenaliteRetard())"
+              />
+              Appliquer la pénalité de retard aux mois déjà passés
+            </label>
+            <p class="field-hint">
+              @if (appliquerPenaliteRetard()) {
+                Une pénalité sera créée pour chaque mois sélectionné déjà passé.
+              } @else {
+                Aucune pénalité ne sera créée, même pour les mois sélectionnés déjà passés.
+              }
+            </p>
+          </div>
+        }
+      </form>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        <button type="submit" form="paiement-form" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Enregistrement…' : 'Enregistrer le paiement' }}
+        </button>
+      </div>
+    </app-modal>

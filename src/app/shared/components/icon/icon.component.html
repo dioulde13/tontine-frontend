@@ -1,0 +1,237 @@
+    <svg
+      [attr.width]="size()"
+      [attr.height]="size()"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      [attr.stroke-width]="strokeWidth()"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      @switch (name()) {
+        @case ('dashboard') {
+          <rect x="3" y="3" width="7" height="7" rx="1.5" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        }
+        @case ('village') {
+          <path d="M12 21s7-7.6 7-12a7 7 0 1 0-14 0c0 4.4 7 12 7 12z" />
+          <circle cx="12" cy="9" r="2.5" />
+        }
+        @case ('buildings') {
+          <rect x="3" y="3" width="8" height="18" rx="1" />
+          <rect x="13" y="9" width="8" height="12" rx="1" />
+          <line x1="6" y1="7" x2="8" y2="7" />
+          <line x1="6" y1="11" x2="8" y2="11" />
+          <line x1="6" y1="15" x2="8" y2="15" />
+          <line x1="16" y1="13" x2="18" y2="13" />
+          <line x1="16" y1="17" x2="18" y2="17" />
+        }
+        @case ('users') {
+          <circle cx="9" cy="8" r="3.2" />
+          <path d="M2.8 20c0-3.6 2.8-6.3 6.2-6.3s6.2 2.7 6.2 6.3" />
+          <circle cx="17.5" cy="8.3" r="2.4" />
+          <path d="M15.4 13.9c2.4.4 4.3 2.5 4.6 5.3" />
+        }
+        @case ('user') {
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20.5c0-4.1 3.6-7.2 8-7.2s8 3.1 8 7.2" />
+        }
+        @case ('user-plus') {
+          <circle cx="9" cy="8" r="3.6" />
+          <path d="M2.5 20c0-3.9 2.9-6.8 6.5-6.8s6.5 2.9 6.5 6.8" />
+          <line x1="18.5" y1="7.5" x2="18.5" y2="13.5" />
+          <line x1="15.5" y1="10.5" x2="21.5" y2="10.5" />
+        }
+        @case ('wallet') {
+          <rect x="2.5" y="6.5" width="19" height="13" rx="2" />
+          <path d="M6 6.5V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1.5" />
+          <line x1="2.5" y1="11" x2="21.5" y2="11" />
+          <circle cx="17" cy="15" r="1.1" fill="currentColor" stroke="none" />
+        }
+        @case ('alert-triangle') {
+          <path d="M12 3.2 2.4 20h19.2L12 3.2z" />
+          <line x1="12" y1="10" x2="12" y2="14.5" />
+          <circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none" />
+        }
+        @case ('receipt') {
+          <path d="M6 2.5h12v18.5l-2.5-1.7-2.5 1.7-2.5-1.7-2.5 1.7-2-1.7V2.5z" />
+          <line x1="9" y1="7.5" x2="15" y2="7.5" />
+          <line x1="9" y1="11" x2="15" y2="11" />
+          <line x1="9" y1="14.5" x2="13" y2="14.5" />
+        }
+        @case ('calendar') {
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+          <line x1="8" y1="3" x2="8" y2="7" />
+          <line x1="16" y1="3" x2="16" y2="7" />
+        }
+        @case ('calendar-check') {
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+          <line x1="8" y1="3" x2="8" y2="7" />
+          <line x1="16" y1="3" x2="16" y2="7" />
+          <path d="M8.5 15.5 10.5 17.5 15.5 13" />
+        }
+        @case ('clipboard-check') {
+          <rect x="5.5" y="4.5" width="13" height="17" rx="2" />
+          <rect x="9" y="2.5" width="6" height="4" rx="1" />
+          <path d="M8.5 13.5 10.3 15.3 15 11" />
+        }
+        @case ('sliders') {
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <circle cx="9" cy="6" r="2" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <circle cx="15" cy="12" r="2" />
+          <line x1="4" y1="18" x2="20" y2="18" />
+          <circle cx="9" cy="18" r="2" />
+        }
+        @case ('shield') {
+          <path d="M12 3 4.5 5.8V11c0 5.2 3.6 8.4 7.5 9.6 3.9-1.2 7.5-4.4 7.5-9.6V5.8L12 3z" />
+        }
+        @case ('log-in') {
+          <path d="M14.5 3.5h3.8a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H14.5" />
+          <path d="M9.8 16.8 15 12l-5.2-4.8" />
+          <line x1="15" y1="12" x2="2.8" y2="12" />
+        }
+        @case ('log-out') {
+          <path d="M9.5 20.5H5.7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2H9.5" />
+          <path d="M16.2 7.2 21 12l-4.8 4.8" />
+          <line x1="21" y1="12" x2="8.8" y2="12" />
+        }
+        @case ('search') {
+          <circle cx="11" cy="11" r="7" />
+          <line x1="21" y1="21" x2="16.4" y2="16.4" />
+        }
+        @case ('filter') {
+          <path d="M4 5h16l-6.2 7.3V19l-3.6 1.8v-8.5L4 5z" />
+        }
+        @case ('plus') {
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        }
+        @case ('pencil') {
+          <path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-4-4L4 16v4z" />
+          <line x1="14.2" y1="6.3" x2="17.8" y2="9.8" />
+        }
+        @case ('trash') {
+          <line x1="4.5" y1="7" x2="19.5" y2="7" />
+          <path d="M9 7V4.8A1.8 1.8 0 0 1 10.8 3h2.4A1.8 1.8 0 0 1 15 4.8V7" />
+          <path d="M6.5 7 7.6 20a1.8 1.8 0 0 0 1.8 1.6h5.2A1.8 1.8 0 0 0 16.4 20L17.5 7" />
+        }
+        @case ('check') {
+          <path d="M5 12.5 9.5 17 19 6.5" />
+        }
+        @case ('check-circle') {
+          <circle cx="12" cy="12" r="9" />
+          <path d="M8 12.3 11 15.3 16 9.5" />
+        }
+        @case ('x') {
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="18" y1="6" x2="6" y2="18" />
+        }
+        @case ('x-circle') {
+          <circle cx="12" cy="12" r="9" />
+          <line x1="9.3" y1="9.3" x2="14.7" y2="14.7" />
+          <line x1="14.7" y1="9.3" x2="9.3" y2="14.7" />
+        }
+        @case ('chevron-down') {
+          <path d="M6 9.5 12 15.5 18 9.5" />
+        }
+        @case ('chevron-right') {
+          <path d="M9 6 15 12 9 18" />
+        }
+        @case ('chevron-left') {
+          <path d="M15 6 9 12 15 18" />
+        }
+        @case ('chevrons-right') {
+          <path d="M7 6 13 12 7 18" />
+          <path d="M13 6 19 12 13 18" />
+        }
+        @case ('chevrons-left') {
+          <path d="M17 6 11 12 17 18" />
+          <path d="M11 6 5 12 11 18" />
+        }
+        @case ('menu') {
+          <line x1="3.5" y1="6.5" x2="20.5" y2="6.5" />
+          <line x1="3.5" y1="12" x2="20.5" y2="12" />
+          <line x1="3.5" y1="17.5" x2="20.5" y2="17.5" />
+        }
+        @case ('bell') {
+          <path d="M18 8a6 6 0 1 0-12 0c0 4.2-2 5.3-2 6.3h16c0-1-2-2.1-2-6.3z" />
+          <path d="M10.2 17.8a1.9 1.9 0 0 0 3.6 0" />
+        }
+        @case ('eye') {
+          <path d="M2 12s4-7.2 10-7.2S22 12 22 12s-4 7.2-10 7.2S2 12 2 12z" />
+          <circle cx="12" cy="12" r="3" />
+        }
+        @case ('eye-off') {
+          <path d="M3.5 3.5 20.5 20.5" />
+          <path d="M11 5.1c.6-.1 1.3-.2 2-.2 5.5 0 9.5 7.1 9.5 7.1a15.6 15.6 0 0 1-3.3 4" />
+          <path d="M6.6 6.8C4.1 8.6 2 12 2 12s3.9 7.1 10 7.1a9.8 9.8 0 0 0 4-.8" />
+          <path d="M9.9 14.1a3 3 0 0 0 4.2-4.2" />
+        }
+        @case ('download') {
+          <path d="M12 3v12.5" />
+          <path d="M6.8 11 12 16.2 17.2 11" />
+          <line x1="4" y1="20.5" x2="20" y2="20.5" />
+        }
+        @case ('printer') {
+          <rect x="5.5" y="8.5" width="13" height="7" rx="1" />
+          <path d="M7 8.5V3.5h10v5" />
+          <rect x="8" y="15.5" width="8" height="5" rx="1" />
+        }
+        @case ('arrow-left') {
+          <line x1="20" y1="12" x2="4.5" y2="12" />
+          <path d="M10.5 5.5 4 12l6.5 6.5" />
+        }
+        @case ('more-vertical') {
+          <circle cx="12" cy="5" r="1.1" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="19" r="1.1" fill="currentColor" stroke="none" />
+        }
+        @case ('inbox') {
+          <path d="M3.5 12 6 4.5h12l2.5 7.5" />
+          <path d="M3.5 12v6a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-6" />
+          <path d="M3.5 12h5l1.8 2.6h3.4L15.5 12h5" />
+        }
+        @case ('alert-circle') {
+          <circle cx="12" cy="12" r="9" />
+          <line x1="12" y1="7.5" x2="12" y2="13" />
+          <circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none" />
+        }
+        @case ('refresh-cw') {
+          <path d="M20.5 12a8.5 8.5 0 0 1-15 5.5" />
+          <path d="M3.5 12a8.5 8.5 0 0 1 15-5.5" />
+          <path d="M20.5 3.8v5h-5" />
+          <path d="M3.5 20.2v-5h5" />
+        }
+        @case ('lock') {
+          <rect x="5" y="11" width="14" height="9.5" rx="2" />
+          <path d="M8 11V7.8a4 4 0 0 1 8 0V11" />
+        }
+        @case ('mail') {
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="M3.5 6.5 12 13 20.5 6.5" />
+        }
+        @case ('phone') {
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
+        }
+        @case ('file-text') {
+          <rect x="5.5" y="2.5" width="13" height="19" rx="1.2" />
+          <line x1="8.5" y1="8" x2="15.5" y2="8" />
+          <line x1="8.5" y1="12" x2="15.5" y2="12" />
+          <line x1="8.5" y1="16" x2="13" y2="16" />
+        }
+        @case ('list') {
+          <line x1="8" y1="6" x2="21" y2="6" />
+          <line x1="8" y1="12" x2="21" y2="12" />
+          <line x1="8" y1="18" x2="21" y2="18" />
+          <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+          <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+          <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
+        }
+      }
+    </svg>

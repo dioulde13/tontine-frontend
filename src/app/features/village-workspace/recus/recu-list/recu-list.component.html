@@ -1,0 +1,82 @@
+    <div class="tab-header">
+      <span class="page-meta"><strong>{{ filtered().length }}</strong> reçu{{ filtered().length > 1 ? 's' : '' }}</span>
+      <button type="button" class="btn btn-primary" (click)="dialogOpen.set(true)">
+        <app-icon name="plus" [size]="16" />
+        Générer un reçu
+      </button>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-field">
+        <label class="filter-label" for="search">Rechercher</label>
+        <div class="filter-search">
+          <app-icon name="search" [size]="16" class="icon" />
+          <input id="search" type="search" class="input" placeholder="Numéro ou membre…" [value]="search()" (input)="onSearch($event)" />
+        </div>
+      </div>
+      <div class="filter-field filter-field-wide">
+        <label class="filter-label">Date d'émission</label>
+        <app-date-range-filter [from]="dateDebut()" [to]="dateFin()" (fromChange)="onDateDebut($event)" (toChange)="onDateFin($event)" />
+      </div>
+      <div class="filter-field">
+        <button type="button" class="btn btn-secondary" (click)="resetFiltres()">
+          <app-icon name="refresh-cw" [size]="14" />
+          Réinitialiser
+        </button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="table-wrap"><app-skeleton [rows]="6" [cols]="4" /></div>
+    } @else if (error()) {
+      <div class="table-wrap"><app-error-state (retry)="load()" /></div>
+    } @else if (filtered().length === 0) {
+      <div class="table-wrap">
+        <app-empty-state
+          icon="receipt"
+          [title]="filtresActifs() ? 'Aucun reçu ne correspond aux filtres' : 'Aucun reçu généré pour le moment'"
+          description="Générez un reçu depuis un paiement existant."
+          [actionLabel]="filtresActifs() ? 'Réinitialiser les filtres' : null"
+          (action)="resetFiltres()"
+        />
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Membre</th>
+              <th>Période</th>
+              <th>Montant</th>
+              <th>Émis le</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of paged(); track r.id) {
+              <tr>
+                <td data-label="Numéro" class="font-mono" style="font-weight: 600;">{{ r.numero }}</td>
+                <td data-label="Membre">{{ nomComplet(r) }}</td>
+                <td data-label="Période">{{ periodes(r) }}</td>
+                <td data-label="Montant" class="font-mono">{{ montant(montantTotal(r)) }}</td>
+                <td data-label="Émis le" class="table-cell-muted">{{ date(r.dateEmission) }}</td>
+                <td>
+                  <div class="table-actions">
+                    <a class="btn btn-secondary btn-sm" [routerLink]="[r.id]">
+                      <app-icon name="eye" [size]="14" />
+                      Voir
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <app-pagination [page]="page()" [pageSize]="PAGE_SIZE" [totalItems]="filtered().length" (pageChange)="page.set($event)" />
+      </div>
+    }
+
+    @if (dialogOpen()) {
+      <app-recu-form-dialog [villageId]="villageIdNumber()" (closed)="dialogOpen.set(false)" (saved)="onSaved()" />
+    }

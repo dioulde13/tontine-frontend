@@ -1,0 +1,21 @@
+    .profil-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      font-size: 13.5px;
+    }
+    .profil-meta-row + .profil-meta-row {
+      border-top: 1px solid var(--color-border);
+    }
+    .profil-meta-label {
+      width: 140px;
+      flex: none;
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+    .profil-roles {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }

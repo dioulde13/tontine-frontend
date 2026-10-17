@@ -1,0 +1,70 @@
+    <div class="login-page">
+      <div class="login-card">
+        <div class="login-brand">
+          <div class="login-logo">
+            <app-icon name="village" [size]="22" />
+          </div>
+          <div>
+            <p class="login-brand-name">Cotisation</p>
+            <p class="login-brand-tagline">Gestion des tontines villageoises</p>
+          </div>
+        </div>
+
+        <h1 class="login-title">Connexion</h1>
+        <p class="login-subtitle">Accédez à votre espace de gestion.</p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="stack" style="gap: 16px; margin-top: 20px;">
+          <div class="field">
+            <label class="field-label" for="telephone">Téléphone<span class="required">*</span></label>
+            <input
+              id="telephone"
+              type="tel"
+              class="input"
+              [class.invalid]="submitted() && form.controls.telephone.invalid"
+              formControlName="telephone"
+              placeholder="+224600000000"
+              autocomplete="username"
+            />
+            @if (submitted() && form.controls.telephone.invalid) {
+              <p class="field-error">Veuillez saisir un numéro de téléphone valide.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="motDePasse">Mot de passe<span class="required">*</span></label>
+            <div class="login-password-wrap">
+              <input
+                id="motDePasse"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="input"
+                [class.invalid]="submitted() && form.controls.motDePasse.invalid"
+                formControlName="motDePasse"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <button type="button" class="login-password-toggle" (click)="showPassword.set(!showPassword())" aria-label="Afficher le mot de passe">
+                <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="17" />
+              </button>
+            </div>
+            @if (submitted() && form.controls.motDePasse.invalid) {
+              <p class="field-error">Le mot de passe est requis.</p>
+            }
+          </div>
+
+          @if (errorMessage()) {
+            <div class="login-error">
+              <app-icon name="alert-circle" [size]="16" />
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <button type="submit" class="btn btn-primary" style="height: 42px; width: 100%; margin-top: 4px;" [disabled]="loading()">
+            @if (loading()) {
+              Connexion en cours…
+            } @else {
+              Se connecter
+            }
+          </button>
+        </form>
+      </div>
+    </div>

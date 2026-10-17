@@ -1,0 +1,66 @@
+    @if (totalItems() > 0) {
+      <div class="pagination">
+        <p class="pagination-summary">
+          Affichage <strong>{{ rangeStart() }}</strong>{{ ' – ' }}<strong>{{ rangeEnd() }}</strong> sur
+          <strong>{{ totalItems() }}</strong> résultat{{ totalItems() > 1 ? 's' : '' }}
+        </p>
+
+        @if (totalPages() > 1) {
+          <div class="pagination-controls">
+            <button
+              type="button"
+              class="btn btn-secondary btn-icon btn-sm"
+              [disabled]="page() <= 1"
+              (click)="pageChange.emit(1)"
+              aria-label="Première page"
+            >
+              <app-icon name="chevrons-left" [size]="15" />
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-icon btn-sm"
+              [disabled]="page() <= 1"
+              (click)="pageChange.emit(page() - 1)"
+              aria-label="Page précédente"
+            >
+              <app-icon name="chevron-left" [size]="16" />
+            </button>
+
+            @for (entry of pageNumbers(); track trackEntry($index, entry)) {
+              @if (entry === 'ellipsis') {
+                <span class="pagination-ellipsis">…</span>
+              } @else {
+                <button
+                  type="button"
+                  class="pagination-number"
+                  [class.active]="entry === page()"
+                  (click)="pageChange.emit(entry)"
+                  [attr.aria-current]="entry === page() ? 'page' : null"
+                >
+                  {{ entry }}
+                </button>
+              }
+            }
+
+            <button
+              type="button"
+              class="btn btn-secondary btn-icon btn-sm"
+              [disabled]="page() >= totalPages()"
+              (click)="pageChange.emit(page() + 1)"
+              aria-label="Page suivante"
+            >
+              <app-icon name="chevron-right" [size]="16" />
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary btn-icon btn-sm"
+              [disabled]="page() >= totalPages()"
+              (click)="pageChange.emit(totalPages())"
+              aria-label="Dernière page"
+            >
+              <app-icon name="chevrons-right" [size]="15" />
+            </button>
+          </div>
+        }
+      </div>
+    }

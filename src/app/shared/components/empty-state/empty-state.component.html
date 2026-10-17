@@ -1,0 +1,14 @@
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <app-icon [name]="icon()" [size]="26" />
+      </div>
+      <p class="empty-state-title">{{ title() }}</p>
+      @if (description()) {
+        <p class="empty-state-description">{{ description() }}</p>
+      }
+      @if (actionLabel()) {
+        <button type="button" class="btn btn-secondary btn-sm" (click)="action.emit()">
+          {{ actionLabel() }}
+        </button>
+      }
+    </div>

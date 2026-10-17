@@ -1,0 +1,37 @@
+    @if (estAutorise()) {
+      <div class="shell">
+        <app-sidebar
+          [sections]="sections()"
+          [title]="village()?.nom ?? ''"
+          [backLink]="backLink()"
+          [backLabel]="backLabel()"
+          [collapsed]="collapsed()"
+          [mobileOpen]="mobileOpen()"
+          (closeMobile)="mobileOpen.set(false)"
+          (toggleCollapse)="toggleCollapse()"
+        />
+
+        <div class="shell-main" [class.collapsed]="collapsed()">
+          <app-navbar [profilLink]="profilLink()" (toggleSidebar)="mobileOpen.set(!mobileOpen())" />
+          <main class="shell-content">
+            <router-outlet />
+          </main>
+          <app-footer />
+        </div>
+
+        @if (mobileOpen()) {
+          <div class="shell-backdrop" (click)="mobileOpen.set(false)"></div>
+        }
+      </div>
+      <app-toast-container />
+    } @else {
+      <div class="page">
+        <div class="card">
+          <app-empty-state
+            icon="shield"
+            title="Accès non autorisé"
+            description="Vous ne gérez pas ce village. Retournez à la liste de vos villages."
+          />
+        </div>
+      </div>
+    }

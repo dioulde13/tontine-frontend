@@ -1,0 +1,38 @@
+    <app-modal title="Générer un reçu" size="sm" (closed)="closed.emit()">
+      <form (ngSubmit)="onSubmit()" id="recu-form" class="field">
+        <label class="field-label">
+          Paiement(s) à quittancer<span class="required">*</span>
+          <span class="field-hint" style="display: block; font-weight: 400; margin-top: 2px;">
+            Cochez un ou plusieurs paiements du même membre pour les regrouper dans un seul reçu.
+          </span>
+        </label>
+        @if (loading()) {
+          <p class="field-hint">Chargement…</p>
+        } @else if (paiementsDisponibles().length === 0) {
+          <p class="field-hint">Aucun paiement disponible dans ce village pour le moment.</p>
+        } @else {
+          <div class="paiement-list">
+            @for (p of paiementsDisponibles(); track p.id) {
+              <label class="paiement-row">
+                <input
+                  type="checkbox"
+                  [checked]="estSelectionne(p)"
+                  [disabled]="!estSelectionnable(p)"
+                  (change)="toggle(p)"
+                />
+                {{ libellePaiement(p) }}
+              </label>
+            }
+          </div>
+        }
+        @if (submitted() && selectionnes().size === 0) {
+          <p class="field-error">Sélectionnez au moins un paiement.</p>
+        }
+      </form>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        <button type="submit" form="recu-form" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Génération…' : 'Générer le reçu' }}
+        </button>
+      </div>
+    </app-modal>

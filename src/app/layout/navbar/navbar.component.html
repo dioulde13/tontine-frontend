@@ -1,0 +1,36 @@
+    <header class="navbar">
+      @if (showSidebarToggle()) {
+        <button type="button" class="btn btn-ghost btn-icon navbar-burger" (click)="toggleSidebar.emit()" aria-label="Ouvrir le menu">
+          <app-icon name="menu" [size]="20" />
+        </button>
+      }
+
+      <h1 class="navbar-title">{{ pageTitle() }}</h1>
+
+      <div class="navbar-spacer"></div>
+
+      <div class="navbar-user" appClickOutside (appClickOutside)="menuOpen.set(false)">
+        <button type="button" class="navbar-user-trigger" (click)="menuOpen.set(!menuOpen())">
+          <span class="navbar-avatar">{{ initials() }}</span>
+          <span class="navbar-user-info">
+            <span class="navbar-user-name">{{ userName() }}</span>
+            <span class="navbar-user-role">{{ userRoleLabel() }}</span>
+          </span>
+          <app-icon name="chevron-down" [size]="15" />
+        </button>
+
+        @if (menuOpen()) {
+          <div class="navbar-menu">
+            <a class="navbar-menu-item" [routerLink]="profilLink()" (click)="menuOpen.set(false)">
+              <app-icon name="user" [size]="16" />
+              Mon profil
+            </a>
+            <hr class="divider" />
+            <button type="button" class="navbar-menu-item navbar-menu-item-danger" (click)="logout()">
+              <app-icon name="log-out" [size]="16" />
+              Déconnexion
+            </button>
+          </div>
+        }
+      </div>
+    </header>

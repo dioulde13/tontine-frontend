@@ -1,0 +1,83 @@
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-color: var(--color-background);
+      background-image:
+        radial-gradient(1000px circle at 12% 8%, rgb(30 99 73 / 0.18), transparent 55%),
+        radial-gradient(900px circle at 88% 15%, rgb(161 98 7 / 0.12), transparent 50%),
+        radial-gradient(1000px circle at 50% 100%, rgb(124 58 237 / 0.08), transparent 55%);
+      padding: 20px;
+      overflow: hidden;
+    }
+    .login-card {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 32px;
+    }
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .login-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+    .login-brand-name {
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .login-brand-tagline {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+    .login-title {
+      font-size: 20px;
+    }
+    .login-subtitle {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+    .login-password-wrap {
+      position: relative;
+    }
+    .login-password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--color-text-subtle);
+      cursor: pointer;
+      display: flex;
+    }
+    .login-error {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-danger-soft);
+      color: var(--color-danger);
+      border: 1px solid var(--color-danger-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 500;
+    }

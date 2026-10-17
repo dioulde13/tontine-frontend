@@ -1,0 +1,41 @@
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Mes villages</h2>
+          <p class="page-subtitle">Villages dont vous assurez la présidence.</p>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="grid-2">
+          @for (i of [1, 2]; track i) {
+            <div class="card card-pad" style="height: 110px;"><app-skeleton [rows]="2" [cols]="2" /></div>
+          }
+        </div>
+      } @else if (error()) {
+        <div class="card"><app-error-state (retry)="load()" /></div>
+      } @else if (villages().length === 0) {
+        <div class="card">
+          <app-empty-state
+            icon="village"
+            title="Aucun village géré pour le moment"
+            description="Un administrateur doit d'abord vous assigner la gestion d'un village."
+          />
+        </div>
+      } @else {
+        <div class="grid-2">
+          @for (village of villages(); track village.id) {
+            <a class="village-card" [routerLink]="['/president/villages', village.id]">
+              <div class="village-card-icon">
+                <app-icon name="village" [size]="22" />
+              </div>
+              <div class="village-card-body">
+                <p class="village-card-name">{{ village.nom }}</p>
+                <p class="village-card-hint">Gérer les membres, réunions, paiements, pénalités et reçus</p>
+              </div>
+              <app-icon name="chevron-right" [size]="18" />
+            </a>
+          }
+        </div>
+      }
+    </div>

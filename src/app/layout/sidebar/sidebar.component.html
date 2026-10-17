@@ -1,0 +1,56 @@
+    <aside class="sidebar" [class.collapsed]="collapsed()" [class.mobile-open]="mobileOpen()">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">
+          <app-icon name="village" [size]="20" />
+        </div>
+        @if (!collapsed()) {
+          <div class="sidebar-brand-text">
+            @if (backLink()) {
+              <a [routerLink]="backLink()" class="sidebar-back-link" (click)="closeMobile.emit()">
+                <app-icon name="arrow-left" [size]="11" />
+                {{ backLabel() }}
+              </a>
+            }
+            <p class="sidebar-brand-name">{{ title() }}</p>
+            @if (!backLink()) {
+              <p class="sidebar-brand-tagline">{{ spaceLabel() }}</p>
+            }
+          </div>
+        }
+        <button type="button" class="sidebar-close-mobile btn btn-ghost btn-icon btn-sm" (click)="closeMobile.emit()" aria-label="Fermer le menu">
+          <app-icon name="x" [size]="18" />
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        @for (section of sections(); track $index) {
+          <div class="sidebar-section">
+            @if (section.title && !collapsed()) {
+              <p class="sidebar-section-title">{{ section.title }}</p>
+            }
+            @for (item of section.items; track item.route) {
+              <a
+                class="sidebar-link"
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: false }"
+                (click)="closeMobile.emit()"
+                [title]="collapsed() ? item.label : ''"
+              >
+                <app-icon [name]="item.icon" [size]="18" />
+                @if (!collapsed()) {
+                  <span>{{ item.label }}</span>
+                }
+              </a>
+            }
+          </div>
+        }
+      </nav>
+
+      <button type="button" class="sidebar-collapse-toggle" (click)="toggleCollapse.emit()">
+        <app-icon [name]="collapsed() ? 'chevron-right' : 'chevron-left'" [size]="16" />
+        @if (!collapsed()) {
+          <span>Réduire</span>
+        }
+      </button>
+    </aside>

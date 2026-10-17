@@ -1,0 +1,108 @@
+    .membre-info-card {
+      display: flex;
+      gap: 14px;
+    }
+    .membre-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      background: var(--color-info-soft);
+      color: var(--color-info);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+    .membre-info-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .membre-info-text {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+
+    .status-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      border-width: 1.5px;
+    }
+    .status-card-paid {
+      border-color: var(--color-success-border);
+      background: var(--color-success-soft);
+    }
+    .status-card-due {
+      border-color: var(--color-warning-border);
+      background: var(--color-warning-soft);
+    }
+    .status-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      background: var(--color-surface);
+    }
+    .status-card-paid .status-icon {
+      color: var(--color-success);
+    }
+    .status-card-due .status-icon {
+      color: var(--color-warning);
+    }
+    .status-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .status-title {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .status-detail {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .section-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .section-label:not(:first-child) {
+      margin-top: 28px;
+    }
+
+    .reunion-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .reunion-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius);
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+    .reunion-title {
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .reunion-detail {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }

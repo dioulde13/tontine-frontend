@@ -1,0 +1,39 @@
+    <div class="config-wrap">
+      <div class="card card-pad config-card">
+        @if (loading()) {
+          <app-skeleton [rows]="3" [cols]="1" />
+        } @else if (error()) {
+          <app-error-state (retry)="load()" />
+        } @else {
+          <h3 class="config-title">{{ config() ? 'Modifier la configuration' : 'Configurer ce village' }}</h3>
+          <p class="field-hint config-subtitle">
+            @if (config()) {
+              Ces montants sont utilisés automatiquement pour chaque cotisation et pénalité calculée dans ce village.
+            } @else {
+              Ce village n'a pas encore de configuration. Définissez les montants de cotisation et de
+              pénalités (utilisés automatiquement pour chaque calcul).
+            }
+          </p>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="stack" style="gap: 16px;">
+            <div class="field">
+              <label class="field-label" for="montantCotisationMensuelle">Cotisation mensuelle (GNF)<span class="required">*</span></label>
+              <input id="montantCotisationMensuelle" type="number" min="0" class="input" formControlName="montantCotisationMensuelle" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="montantPenaliteRetard">Pénalité de retard de paiement (GNF)<span class="required">*</span></label>
+              <input id="montantPenaliteRetard" type="number" min="0" class="input" formControlName="montantPenaliteRetard" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="montantPenaliteAbsenceReunion">Pénalité d'absence à une réunion (GNF)<span class="required">*</span></label>
+              <input id="montantPenaliteAbsenceReunion" type="number" min="0" class="input" formControlName="montantPenaliteAbsenceReunion" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving()">
+                {{ saving() ? 'Enregistrement…' : config() ? 'Enregistrer les modifications' : 'Créer la configuration' }}
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>

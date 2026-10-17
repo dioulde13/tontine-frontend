@@ -1,0 +1,14 @@
+    <app-modal [title]="title()" size="sm" (closed)="cancelled.emit()">
+      <p class="confirm-message">{{ message() }}</p>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="cancelled.emit()">Annuler</button>
+        <button
+          type="button"
+          [class]="danger() ? 'btn btn-danger' : 'btn btn-primary'"
+          [disabled]="loading()"
+          (click)="confirmed.emit()"
+        >
+          {{ loading() ? 'En cours…' : confirmLabel() }}
+        </button>
+      </div>
+    </app-modal>

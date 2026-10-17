@@ -1,0 +1,5 @@
+    <div class="filter-range">
+      <input type="date" class="input" [value]="from() ?? ''" (input)="onFromInput($event)" aria-label="Du" />
+      <span class="filter-range-sep">→</span>
+      <input type="date" class="input" [value]="to() ?? ''" (input)="onToInput($event)" aria-label="Au" />
+    </div>

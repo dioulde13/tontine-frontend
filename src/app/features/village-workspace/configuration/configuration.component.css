@@ -1,0 +1,24 @@
+    .config-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 4vh;
+      min-height: calc(100vh - var(--navbar-height) - 48px - 4vh);
+    }
+    .config-card {
+      width: 100%;
+      max-width: 520px;
+    }
+    .config-title {
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+    .config-subtitle {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    @media (max-width: 640px) {
+      .config-wrap {
+        padding-top: 0;
+      }
+    }

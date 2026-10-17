@@ -1,0 +1,106 @@
+    <div class="recu-toolbar no-print">
+      <a [routerLink]="['..']" class="workspace-back-link">
+        <app-icon name="arrow-left" [size]="14" />
+        Retour aux reçus
+      </a>
+      @if (recu()) {
+        <button type="button" class="btn btn-secondary" (click)="imprimer()">
+          <app-icon name="printer" [size]="16" />
+          Imprimer
+        </button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="card card-pad"><app-skeleton [rows]="5" [cols]="2" /></div>
+    } @else if (error()) {
+      <div class="card"><app-error-state (retry)="load()" /></div>
+    } @else if (recu(); as r) {
+      <div class="receipt card">
+        <div class="receipt-header">
+          <div class="receipt-brand-block">
+            <div class="receipt-logo">
+              <app-icon name="village" [size]="20" />
+            </div>
+            <div>
+              <p class="receipt-brand">Cotisation</p>
+              <p class="receipt-brand-tagline">Gestion des tontines villageoises</p>
+            </div>
+          </div>
+          <div class="receipt-numero">
+            <p class="receipt-numero-label">N° de reçu</p>
+            <p class="font-mono receipt-numero-value">{{ r.numero }}</p>
+            <p class="receipt-numero-date">Émis le {{ date(r.dateEmission) }}</p>
+          </div>
+        </div>
+
+        <div class="receipt-ornament" aria-hidden="true"><span></span><span></span><span></span></div>
+
+        <div class="receipt-title-block">
+          <h3 class="receipt-title">REÇU DE COTISATION</h3>
+          <p class="receipt-subtitle">Village de {{ village(r) }}</p>
+        </div>
+
+        <p class="receipt-declaration">
+          Je soussigné(e)
+          @if (nomPresident(); as president) {
+            <strong>{{ president }}</strong>,
+          } @else {
+            <strong>le Président</strong> du village de {{ village(r) }},
+          }
+          reconnais avoir reçu de <strong>{{ nomComplet(r) }}</strong>, membre du village de
+          {{ village(r) }}, la somme de
+          <strong>{{ montant(montantTotal(r)) }}</strong> ({{ montantLettres(montantTotal(r)) }}),
+          représentant le paiement de sa cotisation au titre de
+          <strong>{{ periodes(r) }}</strong>@if (r.paiements.length === 1) { , versée le {{ date(r.paiements[0].datePaiement) }} }.
+        </p>
+
+        @if (r.paiements.length > 1) {
+          <table class="receipt-itemized">
+            <thead>
+              <tr>
+                <th>Période</th>
+                <th>Date de paiement</th>
+                <th>Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of r.paiements; track p.id) {
+                <tr>
+                  <td>{{ periodeUnique(p) }}</td>
+                  <td>{{ date(p.datePaiement) }}</td>
+                  <td class="font-mono">{{ montant(p.montant) }}</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2">Total</td>
+                <td class="font-mono">{{ montant(montantTotal(r)) }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        }
+
+        <p class="receipt-closing">Le présent reçu est établi pour servir et valoir ce que de droit.</p>
+
+        <p class="receipt-fait">
+          Fait à {{ village(r) }}, le {{ date(r.dateEmission) }}.
+        </p>
+
+        <div class="receipt-signatures">
+          <div class="receipt-signature">
+            <p class="receipt-signature-role">Le Président</p>
+            @if (nomPresident(); as president) {
+              <p class="receipt-signature-name">{{ president }}</p>
+            }
+            <div class="receipt-signature-line"></div>
+          </div>
+          <div class="receipt-signature">
+            <p class="receipt-signature-role">Le Membre</p>
+            <p class="receipt-signature-name">{{ nomComplet(r) }}</p>
+            <div class="receipt-signature-line"></div>
+          </div>
+        </div>
+      </div>
+    }

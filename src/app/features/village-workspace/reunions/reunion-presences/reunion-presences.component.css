@@ -1,0 +1,35 @@
+    .workspace-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .workspace-back-link:hover {
+      color: var(--color-primary);
+    }
+    .presences-title {
+      font-size: 17px;
+    }
+    .presences-col-title {
+      margin-bottom: 12px;
+    }
+    .presence-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .presence-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .presence-list li:last-child {
+      border-bottom: none;
+    }

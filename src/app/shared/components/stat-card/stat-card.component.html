@@ -1,0 +1,12 @@
+    <div class="card card-pad stat-card">
+      <div class="stat-card-icon" [class]="'stat-card-icon-' + tone()">
+        <app-icon [name]="icon()" [size]="20" />
+      </div>
+      <div class="stat-card-body">
+        <p class="stat-card-label">{{ label() }}</p>
+        <p class="stat-card-value">{{ value() }}</p>
+        @if (hint()) {
+          <p class="stat-card-hint">{{ hint() }}</p>
+        }
+      </div>
+    </div>

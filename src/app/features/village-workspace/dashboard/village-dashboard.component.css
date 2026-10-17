@@ -1,0 +1,46 @@
+    .section-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .section-label:not(:first-child) {
+      margin-top: 28px;
+    }
+    .reunion-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .reunion-body {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+    @media (max-width: 480px) {
+      .reunion-card .btn {
+        width: 100%;
+      }
+    }
+    .reunion-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius);
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+    }
+    .reunion-title {
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+    .reunion-detail {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }

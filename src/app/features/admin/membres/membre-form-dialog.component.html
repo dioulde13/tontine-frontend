@@ -1,0 +1,43 @@
+    <app-modal [title]="membre() ? 'Modifier le membre' : 'Nouveau membre'" size="md" (closed)="closed.emit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" id="admin-membre-form" class="form-grid">
+        <div class="field">
+          <label class="field-label" for="nom">Nom<span class="required">*</span></label>
+          <input id="nom" type="text" class="input" formControlName="nom" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="prenom">Prénom<span class="required">*</span></label>
+          <input id="prenom" type="text" class="input" formControlName="prenom" />
+        </div>
+        <div class="field field-full">
+          <label class="field-label" for="telephone">Téléphone<span class="required">*</span></label>
+          <input id="telephone" type="tel" class="input" formControlName="telephone" />
+        </div>
+        @if (membre()) {
+          <div class="field field-full">
+            <label class="field-label" for="motDePasse">Mot de passe</label>
+            <input id="motDePasse" type="password" class="input" formControlName="motDePasse" placeholder="Laisser vide pour ne pas changer" />
+            <p class="field-hint">
+              Laisser vide pour conserver le mot de passe actuel. Si le téléphone change, le mot de passe est
+              automatiquement réinitialisé sur ce nouveau numéro.
+            </p>
+          </div>
+        } @else {
+          <p class="field-hint field-full">Le mot de passe initial du membre sera son numéro de téléphone.</p>
+        }
+        <div class="field field-full">
+          <label class="field-label" for="villageId">Village<span class="required">*</span></label>
+          <select id="villageId" class="select" formControlName="villageId">
+            <option [ngValue]="null" disabled>Sélectionner un village</option>
+            @for (v of villages(); track v.id) {
+              <option [ngValue]="v.id">{{ v.nom }}</option>
+            }
+          </select>
+        </div>
+      </form>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        <button type="submit" form="admin-membre-form" class="btn btn-primary" [disabled]="form.invalid || saving() || !roleResolu()">
+          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </app-modal>

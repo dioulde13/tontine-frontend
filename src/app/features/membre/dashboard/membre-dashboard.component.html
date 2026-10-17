@@ -1,0 +1,92 @@
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Bonjour {{ prenom() }}</h2>
+          <p class="page-subtitle">Votre espace personnel.</p>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="grid-kpi">
+          @for (i of [1, 2, 3, 4]; track i) {
+            <div class="card card-pad" style="height: 90px;"><app-skeleton [rows]="1" [cols]="1" /></div>
+          }
+        </div>
+      } @else if (error()) {
+        <div class="card"><app-error-state (retry)="load()" /></div>
+      } @else if (sansVillage()) {
+        <div class="card card-pad membre-info-card">
+          <div class="membre-info-icon">
+            <app-icon name="alert-circle" [size]="20" />
+          </div>
+          <div>
+            <p class="membre-info-title">Aucun village rattaché à votre compte</p>
+            <p class="membre-info-text">
+              Votre profil n'est pas encore associé à un village, donc votre tableau de bord personnel
+              n'est pas disponible. Contactez l'administrateur ou le président qui gère votre village.
+            </p>
+          </div>
+        </div>
+      } @else if (stats(); as s) {
+        <div class="card card-pad status-card" [class.status-card-paid]="s.aPayeMoisCourant" [class.status-card-due]="!s.aPayeMoisCourant">
+          <div class="status-icon">
+            <app-icon [name]="s.aPayeMoisCourant ? 'check-circle' : 'alert-triangle'" [size]="22" />
+          </div>
+          <div class="status-body">
+            <p class="status-title">Cotisation de {{ periodeCourante(s) }} — {{ s.village.nom }}</p>
+            <p class="status-detail">
+              @if (s.aPayeMoisCourant) {
+                Déjà réglée pour ce mois-ci.
+              } @else if (s.montantCotisationMensuelle !== null) {
+                Non réglée — {{ montant(s.montantCotisationMensuelle) }} attendus ce mois-ci.
+              } @else {
+                Non réglée — montant non encore configuré par votre président.
+              }
+            </p>
+          </div>
+          <span class="badge" [class.badge-success]="s.aPayeMoisCourant" [class.badge-warning]="!s.aPayeMoisCourant">
+            {{ s.aPayeMoisCourant ? 'Payée' : 'Non payée' }}
+          </span>
+        </div>
+
+        <p class="section-label">Historique</p>
+        <div class="grid-kpi">
+          <app-stat-card label="Total payé" [value]="montant(s.montantTotalPaye)" icon="wallet" tone="success" [hint]="s.nombrePaiements + ' paiement(s)'" />
+          <app-stat-card
+            label="Pénalités impayées"
+            [value]="s.nombrePenalitesNonPayees.toString()"
+            icon="alert-triangle"
+            tone="danger"
+            [hint]="montant(s.montantTotalPenalitesNonPayees)"
+          />
+          <app-stat-card label="Taux de présence" [value]="tauxArrondi(s)" icon="clipboard-check" tone="primary" />
+          <app-stat-card label="Présences / Absences" [value]="s.nombrePresences + ' / ' + s.nombreAbsences" icon="users" tone="primary" />
+        </div>
+
+        <p class="section-label">Réunions</p>
+        <div class="card card-pad reunion-card">
+          @if (s.prochaineReunion; as r) {
+            <div class="reunion-icon">
+              <app-icon name="calendar" [size]="20" />
+            </div>
+            <div>
+              <p class="reunion-title">Prochaine réunion</p>
+              <p class="reunion-detail">{{ dateTime(r.dateHeure) }} — {{ r.lieu }}</p>
+            </div>
+          } @else {
+            <div class="reunion-icon">
+              <app-icon name="calendar" [size]="20" />
+            </div>
+            <div>
+              <p class="reunion-title">Aucune réunion à venir</p>
+              <p class="reunion-detail">Votre président n'a pas encore planifié de prochaine réunion.</p>
+            </div>
+          }
+        </div>
+      }
+
+      <a routerLink="/membre/profil" class="btn btn-secondary" style="margin-top: 24px;">
+        <app-icon name="user" [size]="16" />
+        Voir mon profil
+      </a>
+    </div>

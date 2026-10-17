@@ -1,0 +1,66 @@
+    <app-modal [title]="president() ? 'Modifier le président' : 'Nouveau président'" size="md" (closed)="closed.emit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" id="president-form" class="stack" style="gap: 16px;">
+        <div class="form-grid">
+          <div class="field">
+            <label class="field-label" for="nom">Nom<span class="required">*</span></label>
+            <input id="nom" type="text" class="input" [class.invalid]="form.controls.nom.invalid && form.controls.nom.touched" formControlName="nom" />
+            @if (form.controls.nom.invalid && form.controls.nom.touched) {
+              <p class="field-error">Le nom est requis.</p>
+            }
+          </div>
+          <div class="field">
+            <label class="field-label" for="prenom">Prénom<span class="required">*</span></label>
+            <input id="prenom" type="text" class="input" [class.invalid]="form.controls.prenom.invalid && form.controls.prenom.touched" formControlName="prenom" />
+            @if (form.controls.prenom.invalid && form.controls.prenom.touched) {
+              <p class="field-error">Le prénom est requis.</p>
+            }
+          </div>
+          <div class="field field-full">
+            <label class="field-label" for="telephone">Téléphone<span class="required">*</span></label>
+            <input id="telephone" type="tel" class="input" [class.invalid]="form.controls.telephone.invalid && form.controls.telephone.touched" formControlName="telephone" />
+            @if (form.controls.telephone.invalid && form.controls.telephone.touched) {
+              <p class="field-error">
+                {{ form.controls.telephone.errors?.['required'] ? 'Le téléphone est requis.' : 'Numéro de téléphone invalide.' }}
+              </p>
+            }
+          </div>
+          @if (president()) {
+            <div class="field field-full">
+              <label class="field-label" for="motDePasse">Mot de passe</label>
+              <input id="motDePasse" type="password" class="input" [class.invalid]="form.controls.motDePasse.invalid && form.controls.motDePasse.touched" formControlName="motDePasse" placeholder="Laisser vide pour ne pas changer" />
+              @if (form.controls.motDePasse.invalid && form.controls.motDePasse.touched) {
+                <p class="field-error">Le mot de passe doit contenir au moins 6 caractères.</p>
+              } @else {
+                <p class="field-hint">
+                  Laisser vide pour conserver le mot de passe actuel. Si le téléphone change, le mot de passe est
+                  automatiquement réinitialisé sur ce nouveau numéro.
+                </p>
+              }
+            </div>
+          } @else {
+            <p class="field-hint field-full">Le mot de passe initial du président sera son numéro de téléphone.</p>
+          }
+        </div>
+        @if (!roleResolu()) {
+          <p class="field-error">Le rôle "PRESIDENT" n'existe pas encore côté serveur : impossible d'enregistrer.</p>
+        }
+
+        <div class="field">
+          <label class="field-label">Villages gérés</label>
+          <div class="checkbox-grid">
+            @for (village of villages(); track village.id) {
+              <label class="checkbox-row">
+                <input type="checkbox" [checked]="isSelected(village.id)" (change)="toggle(village.id)" />
+                {{ village.nom }}
+              </label>
+            }
+          </div>
+        </div>
+      </form>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        <button type="submit" form="president-form" class="btn btn-primary" [disabled]="saving() || !roleResolu()">
+          {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+        </button>
+      </div>
+    </app-modal>

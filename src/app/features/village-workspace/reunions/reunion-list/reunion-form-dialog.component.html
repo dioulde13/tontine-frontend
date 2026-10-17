@@ -1,0 +1,18 @@
+    <app-modal title="Nouvelle réunion" size="sm" (closed)="closed.emit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" id="reunion-form" class="stack" style="gap: 16px;">
+        <div class="field">
+          <label class="field-label" for="dateHeure">Date et heure<span class="required">*</span></label>
+          <input id="dateHeure" type="datetime-local" class="input" formControlName="dateHeure" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="lieu">Lieu<span class="required">*</span></label>
+          <input id="lieu" type="text" class="input" formControlName="lieu" placeholder="Ex: Place du village" />
+        </div>
+      </form>
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        <button type="submit" form="reunion-form" class="btn btn-primary" [disabled]="form.invalid || saving()">
+          {{ saving() ? 'Enregistrement…' : 'Créer' }}
+        </button>
+      </div>
+    </app-modal>

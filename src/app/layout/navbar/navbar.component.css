@@ -1,0 +1,113 @@
+    .navbar {
+      height: var(--navbar-height);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .navbar-burger {
+      display: none;
+    }
+    .navbar-title {
+      font-size: 15.5px;
+      font-weight: 700;
+    }
+    .navbar-spacer {
+      flex: 1;
+    }
+    .navbar-user {
+      position: relative;
+    }
+    .navbar-user-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+    }
+    .navbar-user-trigger:hover {
+      background: var(--color-surface-muted);
+    }
+    .navbar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12.5px;
+      font-weight: 700;
+      flex: none;
+    }
+    .navbar-user-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.25;
+    }
+    .navbar-user-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .navbar-user-role {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+    .navbar-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      min-width: 200px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 40;
+    }
+    .navbar-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text);
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+    }
+    .navbar-menu-item:hover {
+      background: var(--color-surface-muted);
+    }
+    .navbar-menu-item-danger {
+      color: var(--color-danger);
+    }
+    .navbar-menu-item-danger:hover {
+      background: var(--color-danger-soft);
+    }
+    @media (max-width: 960px) {
+      .navbar-burger {
+        display: inline-flex;
+      }
+      .navbar-user-info {
+        display: none;
+      }
+    }

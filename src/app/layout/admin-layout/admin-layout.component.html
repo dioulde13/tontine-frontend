@@ -1,0 +1,23 @@
+    <div class="shell">
+      <app-sidebar
+        [sections]="sections"
+        spaceLabel="Espace administrateur"
+        [collapsed]="collapsed()"
+        [mobileOpen]="mobileOpen()"
+        (closeMobile)="mobileOpen.set(false)"
+        (toggleCollapse)="toggleCollapse()"
+      />
+
+      <div class="shell-main" [class.collapsed]="collapsed()">
+        <app-navbar profilLink="/admin/profil" (toggleSidebar)="mobileOpen.set(!mobileOpen())" />
+        <main class="shell-content">
+          <router-outlet />
+        </main>
+        <app-footer />
+      </div>
+
+      @if (mobileOpen()) {
+        <div class="shell-backdrop" (click)="mobileOpen.set(false)"></div>
+      }
+    </div>
+    <app-toast-container />

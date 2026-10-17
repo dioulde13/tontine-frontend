@@ -1,0 +1,106 @@
+    <div class="tab-header">
+      <span class="page-meta"><strong>{{ filtered().length }}</strong> pénalité{{ filtered().length > 1 ? 's' : '' }}</span>
+      <button type="button" class="btn btn-primary" (click)="dialogOpen.set(true)">
+        <app-icon name="plus" [size]="16" />
+        Nouvelle pénalité
+      </button>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-field">
+        <label class="filter-label" for="search">Rechercher</label>
+        <div class="filter-search">
+          <app-icon name="search" [size]="16" class="icon" />
+          <input id="search" type="search" class="input" placeholder="Nom du membre…" [value]="search()" (input)="onSearch($event)" />
+        </div>
+      </div>
+      <div class="filter-field">
+        <label class="filter-label" for="statut">Statut</label>
+        <select id="statut" class="select" [value]="filtreStatut()" (change)="onFiltreStatut($event)">
+          <option value="TOUS">Tous les statuts</option>
+          <option value="NON_PAYEE">Non payées</option>
+          <option value="PAYEE">Payées</option>
+        </select>
+      </div>
+      <div class="filter-field filter-field-wide">
+        <label class="filter-label">Date</label>
+        <app-date-range-filter [from]="dateDebut()" [to]="dateFin()" (fromChange)="onDateDebut($event)" (toChange)="onDateFin($event)" />
+      </div>
+      <div class="filter-field">
+        <button type="button" class="btn btn-secondary" (click)="resetFiltres()">
+          <app-icon name="refresh-cw" [size]="14" />
+          Réinitialiser
+        </button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="table-wrap"><app-skeleton [rows]="6" [cols]="5" /></div>
+    } @else if (error()) {
+      <div class="table-wrap"><app-error-state (retry)="load()" /></div>
+    } @else if (filtered().length === 0) {
+      <div class="table-wrap">
+        <app-empty-state
+          icon="alert-triangle"
+          [title]="filtresActifs() ? 'Aucune pénalité ne correspond aux filtres' : 'Aucune pénalité enregistrée'"
+          [actionLabel]="filtresActifs() ? 'Réinitialiser les filtres' : null"
+          (action)="resetFiltres()"
+        />
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Membre</th>
+              <th>Type</th>
+              <th>Période</th>
+              <th>Montant</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of paged(); track p.id) {
+              <tr>
+                <td data-label="Membre" style="font-weight: 600;">{{ nomComplet(p) }}</td>
+                <td data-label="Type">{{ typeLabel(p) }}</td>
+                <td data-label="Période" class="table-cell-muted">{{ periode(p) }}</td>
+                <td data-label="Montant" class="font-mono">{{ montant(p.montant) }}</td>
+                <td data-label="Date" class="table-cell-muted">{{ date(p.date) }}</td>
+                <td data-label="Statut"><app-badge [text]="p.statut === 'PAYEE' ? 'Payée' : 'Non payée'" [variant]="statutVariant(p)" /></td>
+                <td>
+                  <div class="table-actions">
+                    @if (p.statut === 'NON_PAYEE') {
+                      <button type="button" class="btn btn-secondary btn-sm" [disabled]="payerEnCours() === p.id" (click)="payer(p)">
+                        Marquer payée
+                      </button>
+                    }
+                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(p)" aria-label="Supprimer">
+                      <app-icon name="trash" [size]="15" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <app-pagination [page]="page()" [pageSize]="PAGE_SIZE" [totalItems]="filtered().length" (pageChange)="page.set($event)" />
+      </div>
+    }
+
+    @if (dialogOpen()) {
+      <app-penalite-form-dialog [villageId]="villageIdNumber()" (closed)="dialogOpen.set(false)" (saved)="onSaved()" />
+    }
+
+    @if (aSupprimer(); as p) {
+      <app-confirm-dialog
+        title="Supprimer la pénalité"
+        [message]="'Supprimer la pénalité de ' + nomComplet(p) + ' ? Cette action est irréversible.'"
+        confirmLabel="Supprimer"
+        [loading]="deleting()"
+        (cancelled)="aSupprimer.set(null)"
+        (confirmed)="confirmerSuppression(p)"
+      />
+    }

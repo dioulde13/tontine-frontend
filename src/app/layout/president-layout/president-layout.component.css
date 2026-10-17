@@ -1,0 +1,6 @@
+    .shell-main {
+      min-height: 100vh;
+    }
+    .shell-content {
+      min-height: calc(100vh - var(--navbar-height));
+    }

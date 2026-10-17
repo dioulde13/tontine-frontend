@@ -1,0 +1,33 @@
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h2 class="page-title">Tableau de bord</h2>
+          <p class="page-subtitle">Vue d'ensemble de la plateforme, tous villages confondus.</p>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="grid-kpi">
+          @for (i of [1, 2, 3, 4]; track i) {
+            <div class="card card-pad" style="height: 90px;"><app-skeleton [rows]="1" [cols]="1" /></div>
+          }
+        </div>
+      } @else if (error()) {
+        <div class="card"><app-error-state (retry)="load()" /></div>
+      } @else if (stats(); as s) {
+        <p class="section-label">Répartition</p>
+        <div class="grid-kpi">
+          <app-stat-card label="Villages" [value]="s.nombreVillages.toString()" icon="buildings" tone="primary" />
+          <app-stat-card label="Présidents" [value]="s.nombrePresidents.toString()" icon="shield" tone="primary" />
+          <app-stat-card label="Membres" [value]="s.nombreMembres.toString()" icon="user" tone="primary" />
+          <app-stat-card label="Administrateurs" [value]="s.nombreAdmins.toString()" icon="users" tone="primary" />
+        </div>
+
+        <p class="section-label">Activité</p>
+        <div class="grid-kpi">
+          <app-stat-card label="Cotisations collectées" [value]="montant(s.montantTotalCotisationsCollectees)" icon="wallet" tone="success" [hint]="s.nombrePaiements + ' paiements enregistrés'" />
+          <app-stat-card label="Réunions organisées" [value]="s.nombreReunions.toString()" icon="calendar" tone="primary" />
+          <app-stat-card label="Pénalités impayées" [value]="s.nombrePenalitesNonPayees.toString()" icon="alert-triangle" tone="danger" [hint]="montant(s.montantTotalPenalitesNonPayees)" />
+        </div>
+      }
+    </div>
