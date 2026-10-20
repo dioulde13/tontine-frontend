@@ -33,3 +33,10 @@
     .presence-list li:last-child {
       border-bottom: none;
     }
+
+    /* L'icône correspondant au statut déjà appliqué (présent/absent) est désactivée : on la grise
+       nettement plutôt que de se fier au simple opacity du style .btn:disabled, peu visible ici. */
+    .presence-action:disabled {
+      color: var(--color-border-strong);
+      opacity: 1;
+    }

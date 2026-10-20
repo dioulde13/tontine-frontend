@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { Reunion } from '../../../../core/models';
 import { NotificationService } from '../../../../core/services/notification';
+import { PresenceService } from '../../../../core/services/presence';
 import { ReunionService } from '../../../../core/services/reunion';
 import { ConfirmDialog } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DateRangeFilter } from '../../../../shared/components/date-range-filter/date-range-filter.component';
@@ -26,6 +27,7 @@ const PAGE_SIZE = 10;
 })
 export class ReunionList {
   private readonly reunionService = inject(ReunionService);
+  private readonly presenceService = inject(PresenceService);
   private readonly notifications = inject(NotificationService);
 
   readonly villageId = input<string>('');
@@ -33,6 +35,8 @@ export class ReunionList {
 
   readonly PAGE_SIZE = PAGE_SIZE;
   readonly reunions = signal<Reunion[]>([]);
+  /** Ids des réunions ayant déjà au moins une présence enregistrée : suppression bloquée (historique à préserver). */
+  readonly reunionsAvecPresences = signal<Set<number>>(new Set());
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly dialogOpen = signal(false);
@@ -89,8 +93,27 @@ export class ReunionList {
     this.loading.set(true);
     this.error.set(false);
     try {
-      const reunions = await firstValueFrom(this.reunionService.findByVillage(this.villageIdNumber()));
+      const villageId = this.villageIdNumber();
+      const reunions = await firstValueFrom(this.reunionService.findByVillage(villageId));
       this.reunions.set(reunions);
+
+      // Pas d'endpoint "compte des présences" : on vérifie réunion par réunion si au moins une existe.
+      const presencesParReunion = await Promise.all(
+        reunions.map((r) =>
+          Promise.all([
+            firstValueFrom(this.presenceService.findPresents(villageId, r.id)),
+            firstValueFrom(this.presenceService.findAbsents(villageId, r.id)),
+          ]),
+        ),
+      );
+      const avecPresences = new Set<number>();
+      reunions.forEach((r, i) => {
+        const [presents, absents] = presencesParReunion[i];
+        if (presents.length > 0 || absents.length > 0) {
+          avecPresences.add(r.id);
+        }
+      });
+      this.reunionsAvecPresences.set(avecPresences);
     } catch {
       this.error.set(true);
     } finally {

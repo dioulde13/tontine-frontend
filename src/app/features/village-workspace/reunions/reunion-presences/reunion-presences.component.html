@@ -79,21 +79,21 @@
                     <div class="table-actions">
                       <button
                         type="button"
-                        class="btn btn-ghost btn-icon btn-sm"
-                        [disabled]="ligne.presence?.present === true"
+                        class="btn btn-ghost btn-icon btn-sm presence-action"
+                        [disabled]="ligne.presence !== null"
                         (click)="demanderConfirmation(ligne.membre, true)"
                         aria-label="Marquer présent"
-                        title="Marquer présent"
+                        [title]="ligne.presence !== null ? 'Statut déjà enregistré' : 'Marquer présent'"
                       >
                         <app-icon name="check-circle" [size]="16" />
                       </button>
                       <button
                         type="button"
-                        class="btn btn-ghost btn-icon btn-sm"
-                        [disabled]="ligne.presence?.present === false"
+                        class="btn btn-ghost btn-icon btn-sm presence-action"
+                        [disabled]="ligne.presence !== null"
                         (click)="demanderConfirmation(ligne.membre, false)"
                         aria-label="Marquer absent"
-                        title="Marquer absent"
+                        [title]="ligne.presence !== null ? 'Statut déjà enregistré' : 'Marquer absent'"
                       >
                         <app-icon name="x-circle" [size]="16" />
                       </button>

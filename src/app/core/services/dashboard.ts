@@ -17,8 +17,16 @@ export class DashboardService {
     return this.http.get<AdminDashboard>(`${environment.apiUrl}/admin/dashboard`);
   }
 
-  getPresidentDashboard(villageId: number) {
-    return this.http.get<PresidentDashboard>(`${environment.apiUrl}/villages/${villageId}/dashboard`);
+  /** dateDebut/dateFin (format "YYYY-MM-DD", bornes incluses) : restreignent les agrégats historiques à cette période. */
+  getPresidentDashboard(villageId: number, dateDebut?: string | null, dateFin?: string | null) {
+    let params = new HttpParams();
+    if (dateDebut) {
+      params = params.set('dateDebut', dateDebut);
+    }
+    if (dateFin) {
+      params = params.set('dateFin', dateFin);
+    }
+    return this.http.get<PresidentDashboard>(`${environment.apiUrl}/villages/${villageId}/dashboard`, { params });
   }
 
   /**

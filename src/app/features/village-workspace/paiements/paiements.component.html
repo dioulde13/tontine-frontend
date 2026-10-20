@@ -86,10 +86,10 @@
                       <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="genererRecu(p)" aria-label="Générer un reçu">
                         <app-icon name="receipt" [size]="15" />
                       </button>
+                      <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(p)" aria-label="Supprimer">
+                        <app-icon name="trash" [size]="15" />
+                      </button>
                     }
-                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(p)" aria-label="Supprimer">
-                      <app-icon name="trash" [size]="15" />
-                    </button>
                   </div>
                 </td>
               </tr>

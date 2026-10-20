@@ -59,9 +59,11 @@
                       <app-icon name="clipboard-check" [size]="14" />
                       Présences
                     </a>
-                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(reunion)" aria-label="Supprimer">
-                      <app-icon name="trash" [size]="15" />
-                    </button>
+                    @if (!reunionsAvecPresences().has(reunion.id)) {
+                      <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(reunion)" aria-label="Supprimer">
+                        <app-icon name="trash" [size]="15" />
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>

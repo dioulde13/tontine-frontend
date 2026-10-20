@@ -7,6 +7,19 @@
     } @else if (error()) {
       <div class="card"><app-error-state (retry)="load()" /></div>
     } @else if (stats(); as s) {
+      <div class="filter-card">
+        <div class="filter-field filter-field-wide">
+          <label class="filter-label">Période (collecté, pénalités, réunions, présence)</label>
+          <app-date-range-filter [from]="dateDebut()" [to]="dateFin()" (fromChange)="onDateDebut($event)" (toChange)="onDateFin($event)" />
+        </div>
+        <div class="filter-field">
+          <button type="button" class="btn btn-secondary" (click)="resetFiltres()">
+            <app-icon name="refresh-cw" [size]="14" />
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+
       <p class="section-label">{{ periodeCourante(s) }}</p>
       <div class="grid-kpi">
         <app-stat-card label="Membres" [value]="s.nombreMembres.toString()" icon="users" tone="primary" />
@@ -15,7 +28,7 @@
         <app-stat-card label="Taux de présence" [value]="tauxArrondi(s)" icon="clipboard-check" tone="primary" />
       </div>
 
-      <p class="section-label">Cotisations &amp; pénalités</p>
+      <p class="section-label">Cotisations &amp; pénalités{{ dateDebut() || dateFin() ? ' — période filtrée' : '' }}</p>
       <div class="grid-kpi">
         <app-stat-card label="Collecté ce mois" [value]="montant(s.montantCollecteMoisCourant)" icon="wallet" tone="success" />
         <app-stat-card label="Collecté au total" [value]="montant(s.montantTotalCollecte)" icon="wallet" tone="primary" />
@@ -25,6 +38,14 @@
           icon="alert-triangle"
           tone="danger"
           [hint]="montant(s.montantTotalPenalitesNonPayees)"
+        />
+        <app-stat-card label="Montant total des pénalités" [value]="montant(s.montantTotalPenalites)" icon="shield" tone="primary" />
+        <app-stat-card
+          label="Total en caisse"
+          [value]="montant(s.montantCaisse)"
+          icon="wallet"
+          tone="success"
+          hint="Paiements + pénalités payées"
         />
         <app-stat-card
           label="Cotisation mensuelle"
@@ -45,7 +66,9 @@
             <p class="reunion-detail">{{ dateTime(r.dateHeure) }} — {{ r.lieu }}</p>
           } @else {
             <p class="reunion-title">Aucune réunion à venir</p>
-            <p class="reunion-detail">{{ s.nombreReunions }} réunion(s) organisée(s) au total dans ce village.</p>
+            <p class="reunion-detail">
+              {{ s.nombreReunions }} réunion(s) organisée(s) {{ dateDebut() || dateFin() ? 'sur la période sélectionnée' : 'au total dans ce village' }}.
+            </p>
           }
         </div>
         <a class="btn btn-secondary btn-sm" routerLink="../reunions">

@@ -3,6 +3,10 @@ import { firstValueFrom } from 'rxjs';
 
 import { Utilisateur, utilisateurNomComplet } from '../../../core/models';
 import { NotificationService } from '../../../core/services/notification';
+import { PaiementService } from '../../../core/services/paiement';
+import { PenaliteService } from '../../../core/services/penalite';
+import { PresenceService } from '../../../core/services/presence';
+import { ReunionService } from '../../../core/services/reunion';
 import { UtilisateurService } from '../../../core/services/utilisateur';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state.component';
@@ -22,6 +26,10 @@ const PAGE_SIZE = 10;
 })
 export class Membres {
   private readonly utilisateurService = inject(UtilisateurService);
+  private readonly paiementService = inject(PaiementService);
+  private readonly penaliteService = inject(PenaliteService);
+  private readonly reunionService = inject(ReunionService);
+  private readonly presenceService = inject(PresenceService);
   private readonly notifications = inject(NotificationService);
 
   readonly villageId = input<string>('');
@@ -29,6 +37,8 @@ export class Membres {
 
   readonly PAGE_SIZE = PAGE_SIZE;
   readonly membres = signal<Utilisateur[]>([]);
+  /** Ids des membres ayant déjà un paiement, une pénalité ou une présence : suppression bloquée (historique à préserver). */
+  readonly membresAvecHistorique = signal<Set<number>>(new Set());
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly search = signal('');
@@ -63,13 +73,49 @@ export class Membres {
     this.loading.set(true);
     this.error.set(false);
     try {
-      const membres = await firstValueFrom(this.utilisateurService.findMembresDuVillage(this.villageIdNumber()));
+      const villageId = this.villageIdNumber();
+      const membres = await firstValueFrom(this.utilisateurService.findMembresDuVillage(villageId));
       this.membres.set(membres);
+      this.membresAvecHistorique.set(await this.chargerMembresAvecHistorique(villageId));
     } catch {
       this.error.set(true);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  /** Union des ids de membres ayant au moins un paiement, une pénalité, ou une présence (peu importe la réunion). */
+  private async chargerMembresAvecHistorique(villageId: number): Promise<Set<number>> {
+    const [paiements, penalites, reunions] = await Promise.all([
+      firstValueFrom(this.paiementService.findByVillage(villageId)),
+      firstValueFrom(this.penaliteService.findByVillage(villageId)),
+      firstValueFrom(this.reunionService.findByVillage(villageId)),
+    ]);
+
+    const ids = new Set<number>();
+    for (const p of paiements) {
+      ids.add(p.utilisateur.id);
+    }
+    for (const p of penalites) {
+      ids.add(p.utilisateur.id);
+    }
+
+    // Pas d'endpoint "présences du village" : on les agrège réunion par réunion.
+    const presencesParReunion = await Promise.all(
+      reunions.map((r) =>
+        Promise.all([
+          firstValueFrom(this.presenceService.findPresents(villageId, r.id)),
+          firstValueFrom(this.presenceService.findAbsents(villageId, r.id)),
+        ]),
+      ),
+    );
+    for (const [presents, absents] of presencesParReunion) {
+      for (const p of [...presents, ...absents]) {
+        ids.add(p.utilisateur.id);
+      }
+    }
+
+    return ids;
   }
 
   nomComplet(u: Utilisateur): string {

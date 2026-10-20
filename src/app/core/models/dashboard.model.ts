@@ -30,6 +30,10 @@ export interface PresidentDashboard {
   montantCollecteMoisCourant: number;
   nombrePenalitesNonPayees: number;
   montantTotalPenalitesNonPayees: number;
+  /** Toutes les pénalités (payées + non payées), contrairement à montantTotalPenalitesNonPayees ci-dessus. */
+  montantTotalPenalites: number;
+  /** Argent réellement collecté par le village : paiements + pénalités déjà payées. */
+  montantCaisse: number;
   nombreReunions: number;
   /** null si aucune réunion n'est planifiée dans le futur. */
   prochaineReunion: Reunion | null;

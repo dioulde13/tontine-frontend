@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { NUMERO_MOIS_LABEL, PresidentDashboard } from '../../../core/models';
 import { DashboardService } from '../../../core/services/dashboard';
+import { DateRangeFilter } from '../../../shared/components/date-range-filter/date-range-filter.component';
 import { ErrorState } from '../../../shared/components/error-state/error-state.component';
 import { Icon } from '../../../shared/components/icon/icon.component';
 import { Skeleton } from '../../../shared/components/skeleton/skeleton.component';
@@ -12,7 +13,7 @@ import { formatDateTime, formatMontant } from '../../../shared/utils/format';
 
 @Component({
   selector: 'app-village-dashboard',
-  imports: [RouterLink, StatCard, Icon, ErrorState, Skeleton],
+  imports: [RouterLink, StatCard, Icon, ErrorState, Skeleton, DateRangeFilter],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './village-dashboard.component.html',
   styleUrl: './village-dashboard.component.css',
@@ -26,6 +27,8 @@ export class VillageDashboard {
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly stats = signal<PresidentDashboard | null>(null);
+  readonly dateDebut = signal<string | null>(null);
+  readonly dateFin = signal<string | null>(null);
 
   private readonly loadOnVillageChange = effect(() => {
     this.villageIdNumber();
@@ -48,11 +51,29 @@ export class VillageDashboard {
     return Math.round(s.tauxPresence) + ' %';
   }
 
+  onDateDebut(value: string | null): void {
+    this.dateDebut.set(value);
+    this.load();
+  }
+
+  onDateFin(value: string | null): void {
+    this.dateFin.set(value);
+    this.load();
+  }
+
+  resetFiltres(): void {
+    this.dateDebut.set(null);
+    this.dateFin.set(null);
+    this.load();
+  }
+
   async load(): Promise<void> {
     this.loading.set(true);
     this.error.set(false);
     try {
-      const stats = await firstValueFrom(this.dashboardService.getPresidentDashboard(this.villageIdNumber()));
+      const stats = await firstValueFrom(
+        this.dashboardService.getPresidentDashboard(this.villageIdNumber(), this.dateDebut(), this.dateFin()),
+      );
       this.stats.set(stats);
     } catch {
       this.error.set(true);

@@ -56,9 +56,11 @@
                     <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="dialogMembre.set(membre)" aria-label="Modifier">
                       <app-icon name="pencil" [size]="15" />
                     </button>
-                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(membre)" aria-label="Supprimer">
-                      <app-icon name="trash" [size]="15" />
-                    </button>
+                    @if (!membresAvecHistorique().has(membre.id)) {
+                      <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(membre)" aria-label="Supprimer">
+                        <app-icon name="trash" [size]="15" />
+                      </button>
+                    }
                   </div>
                 </td>
               </tr>
