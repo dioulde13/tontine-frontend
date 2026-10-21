@@ -2,6 +2,9 @@
       display: flex;
       gap: 14px;
     }
+    .membre-info-card > div:last-child {
+      min-width: 0;
+    }
     .membre-info-icon {
       width: 40px;
       height: 40px;

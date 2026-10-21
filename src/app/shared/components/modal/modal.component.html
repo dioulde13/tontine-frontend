@@ -5,10 +5,12 @@
         (click)="$event.stopPropagation()"
         role="dialog"
         aria-modal="true"
+        aria-labelledby="modal-title"
       >
+        <div class="modal-handle" aria-hidden="true"></div>
         <header class="modal-header">
-          <h2 class="modal-title">{{ title() }}</h2>
-          <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="closed.emit()" aria-label="Fermer">
+          <h2 class="modal-title" id="modal-title">{{ title() }}</h2>
+          <button type="button" class="modal-close" (click)="closed.emit()" aria-label="Fermer">
             <app-icon name="x" [size]="18" />
           </button>
         </header>

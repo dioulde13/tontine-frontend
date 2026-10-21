@@ -24,3 +24,9 @@
     .paiement-row:has(input:not(:disabled)):hover {
       background: var(--color-surface-muted);
     }
+    @media (max-width: 640px) {
+      .paiement-row {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }

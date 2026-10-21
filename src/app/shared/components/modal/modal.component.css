@@ -1,73 +1,189 @@
+    /* ----------------------------------------------------------------------
+       Modale — comportement par écran :
+         Bureau / grand écran (par défaut) : boîte centrée, coins arrondis
+           partout, légère animation de "pop-in".
+         Tablette (<=1024px)                : même boîte centrée, marges et
+           paddings resserrés pour mieux utiliser l'espace disponible.
+         Téléphone (<=640px)                : feuille ancrée en bas de
+           l'écran ("bottom sheet"), coins arrondis uniquement en haut,
+           poignée de glissement, boutons du pied empilés pleine largeur.
+       ---------------------------------------------------------------------- */
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgb(15 23 42 / 0.45);
+      background: rgb(16 32 26 / 0.5);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: var(--space-6);
       z-index: 1000;
-      animation: modal-fade-in 0.15s ease;
+      animation: modal-backdrop-in var(--transition) both;
     }
+
     .modal-panel {
+      position: relative;
       background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-lg);
       width: 100%;
-      max-height: calc(100vh - 40px);
+      max-height: calc(100vh - 2 * var(--space-6));
       display: flex;
       flex-direction: column;
-      animation: modal-pop-in 0.15s ease;
+      animation: modal-panel-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
     .modal-sm { max-width: 420px; }
     .modal-md { max-width: 560px; }
-    .modal-lg { max-width: 760px; }
+    .modal-lg { max-width: 780px; }
+
+    /* Poignée de glissement : élément purement décoratif, visible uniquement
+       en mode "feuille" mobile (voir media query plus bas). */
+    .modal-handle {
+      display: none;
+    }
+
     .modal-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 20px;
+      gap: var(--space-4);
+      padding: var(--space-5) var(--space-6);
       border-bottom: 1px solid var(--color-border);
       flex: none;
     }
     .modal-title {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--color-text);
+      line-height: 1.35;
     }
+    .modal-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: none;
+      border-radius: var(--radius-full);
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    }
+    .modal-close:hover {
+      background: var(--color-surface-muted);
+      color: var(--color-text);
+    }
+    .modal-close:active {
+      transform: scale(0.92);
+    }
+
     .modal-body {
-      padding: 20px;
+      padding: var(--space-6);
       overflow-y: auto;
+      overscroll-behavior: contain;
       flex: 1;
       min-height: 0;
     }
+
     .modal-footer {
       display: flex;
       justify-content: flex-end;
-      gap: 10px;
-      padding: 16px 20px;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-6);
       border-top: 1px solid var(--color-border);
       flex: none;
     }
     .modal-footer:empty {
       display: none;
     }
-    @keyframes modal-fade-in {
+
+    @keyframes modal-backdrop-in {
       from { opacity: 0; }
       to { opacity: 1; }
     }
-    @keyframes modal-pop-in {
-      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    @keyframes modal-panel-in {
+      from { opacity: 0; transform: translateY(14px) scale(0.97); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    @media (max-width: 640px) {
-      .modal-backdrop { padding: 0; align-items: flex-end; }
-      .modal-panel { max-height: 92vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-width: 100% !important; }
+    @keyframes modal-sheet-in {
+      from { opacity: 0; transform: translateY(100%); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    @media (max-width: 480px) {
+
+    /* ------------------------------ Tablette ------------------------------ */
+    @media (max-width: 1024px) {
+      .modal-backdrop {
+        padding: var(--space-4);
+      }
+      .modal-header {
+        padding: var(--space-4) var(--space-5);
+      }
+      .modal-body {
+        padding: var(--space-5);
+      }
+      .modal-footer {
+        padding: var(--space-4) var(--space-5);
+      }
+    }
+
+    /* ------------------------------ Téléphone ------------------------------
+       Feuille ancrée en bas : plus naturelle au pouce qu'une boîte flottante
+       centrée. Légère marge gauche/droite (pas de 0 strict) pour ne jamais
+       coller aux bords de l'écran. */
+    @media (max-width: 640px) {
+      .modal-backdrop {
+        align-items: flex-end;
+        padding: 0 var(--space-3);
+      }
+      .modal-panel {
+        max-width: 100% !important;
+        max-height: 88vh;
+        border-radius: var(--radius-lg);
+        animation-name: modal-sheet-in;
+        animation-duration: 280ms;
+        padding-bottom: env(safe-area-inset-bottom);
+        margin-bottom: var(--space-3);
+      }
+      .modal-handle {
+        display: block;
+        width: 36px;
+        height: 4px;
+        border-radius: var(--radius-full);
+        background: var(--color-border-strong);
+        margin: 10px auto 0;
+        flex: none;
+      }
+      .modal-header {
+        padding: var(--space-3) var(--space-5) var(--space-4);
+      }
+      .modal-title {
+        font-size: 16px;
+      }
+      .modal-body {
+        padding: var(--space-5);
+      }
       .modal-footer {
         flex-direction: column-reverse;
+        gap: var(--space-2);
+        padding: var(--space-4) var(--space-5);
       }
       .modal-footer .btn {
         width: 100%;
+      }
+      /* Champs plus confortables au doigt à l'intérieur d'une modale mobile. */
+      .modal-body .input,
+      .modal-body .select,
+      .modal-body .textarea {
+        min-height: 44px;
+      }
+      .modal-body .textarea {
+        min-height: 88px;
       }
     }

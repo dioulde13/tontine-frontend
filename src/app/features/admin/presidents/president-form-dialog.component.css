@@ -8,3 +8,8 @@
       max-height: 200px;
       overflow-y: auto;
     }
+    @media (max-width: 480px) {
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+    }

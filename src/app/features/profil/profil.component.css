@@ -19,3 +19,15 @@
       gap: 6px;
       flex-wrap: wrap;
     }
+    @media (max-width: 480px) {
+      /* Une étiquette figée à 140px grignote trop de place sur un petit téléphone (ex: la liste
+         des "Villages gérés" peut être longue) : on empile plutôt étiquette et valeur. */
+      .profil-meta-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      .profil-meta-label {
+        width: auto;
+      }
+    }
