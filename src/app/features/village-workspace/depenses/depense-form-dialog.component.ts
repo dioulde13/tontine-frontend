@@ -41,6 +41,7 @@ export class DepenseFormDialog implements OnInit {
     montant: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
     motif: this.fb.control(''),
     date: this.fb.control(new Date().toISOString().slice(0, 10), [Validators.required]),
+    nomComptable: this.fb.control('', [Validators.required]),
   });
 
   async ngOnInit(): Promise<void> {
@@ -67,6 +68,7 @@ export class DepenseFormDialog implements OnInit {
           montant: values.montant!,
           motif: motif ? motif : null,
           date: values.date,
+          nomComptable: values.nomComptable.trim(),
         }),
       );
       this.notifications.success('Dépense enregistrée, reçu généré avec succès.');

@@ -11,6 +11,8 @@ export interface Depense {
   motif: string | null;
   /** ISO-8601 LocalDate */
   date: string;
+  /** Personne ayant effectivement retiré l'argent de la caisse pour cette dépense (imprimé sur le reçu). */
+  nomComptable: string;
   numeroRecu: string;
   /** ISO-8601 LocalDate */
   dateEmissionRecu: string;
@@ -28,4 +30,5 @@ export interface CreateDepenseRequest {
   montant: number;
   motif: string | null;
   date: string;
+  nomComptable: string;
 }

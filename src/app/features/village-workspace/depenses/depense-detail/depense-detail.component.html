@@ -48,7 +48,7 @@
           } @else {
             <strong>le Président</strong> du village de {{ nomVillage() }},
           }
-          certifie avoir réglé sur la caisse du village la somme de
+          certifie avoir remis à <strong>{{ d.nomComptable }}</strong>, sur la caisse du village, la somme de
           <strong>{{ montant(d.montant) }}</strong> ({{ montantLettres(d.montant) }}),
           au titre de <strong>{{ d.type.libelle }}</strong>@if (d.motif) {, {{ d.motif }}}, le {{ date(d.date) }}.
         </p>
@@ -66,7 +66,8 @@
             <div class="receipt-signature-line"></div>
           </div>
           <div class="receipt-signature">
-            <p class="receipt-signature-role">Bénéficiaire</p>
+            <p class="receipt-signature-role">Le Comptable</p>
+            <p class="receipt-signature-name">{{ d.nomComptable }}</p>
             <div class="receipt-signature-line"></div>
           </div>
         </div>
