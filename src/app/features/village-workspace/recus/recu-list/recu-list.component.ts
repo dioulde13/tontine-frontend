@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { Recu, recuMontantTotal, recuPeriodes, utilisateurNomComplet } from '../../../../core/models';
+import { Paiement, Recu, recuMontantTotal, recuPeriodes, utilisateurNomComplet } from '../../../../core/models';
 import { RecuService } from '../../../../core/services/recu';
 import { DateRangeFilter } from '../../../../shared/components/date-range-filter/date-range-filter.component';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state.component';
@@ -10,7 +10,8 @@ import { ErrorState } from '../../../../shared/components/error-state/error-stat
 import { Icon } from '../../../../shared/components/icon/icon.component';
 import { Pagination } from '../../../../shared/components/pagination/pagination.component';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton.component';
-import { dansPeriode } from '../../../../shared/utils/date-range';
+import { dansPeriode, debutMoisCourant, finMoisCourant } from '../../../../shared/utils/date-range';
+import { exportSectionsToExcel, exportSectionsToPdf } from '../../../../shared/utils/export';
 import { formatDate, formatMontant } from '../../../../shared/utils/format';
 import { RecuFormDialog } from './recu-form-dialog.component';
 
@@ -33,8 +34,8 @@ export class RecuList {
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly search = signal('');
-  readonly dateDebut = signal<string | null>(null);
-  readonly dateFin = signal<string | null>(null);
+  readonly dateDebut = signal<string | null>(debutMoisCourant());
+  readonly dateFin = signal<string | null>(finMoisCourant());
   readonly page = signal(1);
   readonly dialogOpen = signal(false);
 
@@ -47,12 +48,14 @@ export class RecuList {
       all = all.filter((r) => r.numero.toLowerCase().includes(term) || this.nomComplet(r).toLowerCase().includes(term));
     }
     if (debut || fin) {
-      all = all.filter((r) => dansPeriode(r.dateEmission, debut, fin));
+      all = all.filter((r) => r.paiements.some((p) => dansPeriode(this.periodeIso(p), debut, fin)));
     }
     return all;
   });
 
-  readonly filtresActifs = computed(() => !!this.search() || !!this.dateDebut() || !!this.dateFin());
+  readonly filtresActifs = computed(
+    () => !!this.search() || this.dateDebut() !== debutMoisCourant() || this.dateFin() !== finMoisCourant(),
+  );
 
   readonly paged = computed(() => {
     const start = (this.page() - 1) * PAGE_SIZE;
@@ -70,6 +73,12 @@ export class RecuList {
 
   periodes(r: Recu): string {
     return recuPeriodes(r);
+  }
+
+  /** Date du 1er jour de la période cotisée par ce paiement — sert au filtre par plage de dates,
+   *  qui doit porter sur les mois couverts par le reçu et non sur sa date d'émission. */
+  private periodeIso(p: Paiement): string {
+    return `${p.annee}-${String(p.mois).padStart(2, '0')}-01`;
   }
 
   montantTotal(r: Recu): number {
@@ -102,8 +111,8 @@ export class RecuList {
 
   resetFiltres(): void {
     this.search.set('');
-    this.dateDebut.set(null);
-    this.dateFin.set(null);
+    this.dateDebut.set(debutMoisCourant());
+    this.dateFin.set(finMoisCourant());
     this.page.set(1);
   }
 
@@ -123,5 +132,33 @@ export class RecuList {
   onSaved(): void {
     this.dialogOpen.set(false);
     this.load();
+  }
+
+  private libellePeriodeExport(): string {
+    const debut = this.dateDebut();
+    const fin = this.dateFin();
+    if (!debut && !fin) {
+      return '';
+    }
+    const partie = (iso: string | null) => (iso ? this.date(iso) : '…');
+    return ` — ${partie(debut)} au ${partie(fin)}`;
+  }
+
+  private sectionsExport() {
+    return [
+      {
+        title: `Reçus${this.libellePeriodeExport()}`,
+        headers: ['Numéro', 'Membre', 'Périodes couvertes', 'Montant (GNF)', 'Émis le'],
+        rows: this.filtered().map((r) => [r.numero, this.nomComplet(r), this.periodes(r), this.montantTotal(r), this.date(r.dateEmission)]),
+      },
+    ];
+  }
+
+  async exporterExcel(): Promise<void> {
+    await exportSectionsToExcel('recus', this.sectionsExport());
+  }
+
+  async exporterPdf(): Promise<void> {
+    await exportSectionsToPdf('recus', 'Liste des reçus', this.sectionsExport());
   }
 }

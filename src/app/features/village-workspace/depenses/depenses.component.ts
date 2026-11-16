@@ -12,7 +12,7 @@ import { ErrorState } from '../../../shared/components/error-state/error-state.c
 import { Icon } from '../../../shared/components/icon/icon.component';
 import { Pagination } from '../../../shared/components/pagination/pagination.component';
 import { Skeleton } from '../../../shared/components/skeleton/skeleton.component';
-import { dansPeriode } from '../../../shared/utils/date-range';
+import { dansPeriode, debutMoisCourant, finMoisCourant } from '../../../shared/utils/date-range';
 import { formatDate, formatMontant } from '../../../shared/utils/format';
 import { DepenseFormDialog } from './depense-form-dialog.component';
 import { TypesDepensesDialog } from './types-depenses-dialog.component';
@@ -48,8 +48,8 @@ export class Depenses {
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly search = signal('');
-  readonly dateDebut = signal<string | null>(null);
-  readonly dateFin = signal<string | null>(null);
+  readonly dateDebut = signal<string | null>(debutMoisCourant());
+  readonly dateFin = signal<string | null>(finMoisCourant());
   readonly page = signal(1);
   readonly dialogOpen = signal(false);
   readonly typesDialogOpen = signal(false);
@@ -75,7 +75,9 @@ export class Depenses {
     return all;
   });
 
-  readonly filtresActifs = computed(() => !!this.search() || !!this.dateDebut() || !!this.dateFin());
+  readonly filtresActifs = computed(
+    () => !!this.search() || this.dateDebut() !== debutMoisCourant() || this.dateFin() !== finMoisCourant(),
+  );
 
   readonly totalDepenses = computed(() => this.filtered().reduce((total, d) => total + d.montant, 0));
 
@@ -115,8 +117,8 @@ export class Depenses {
 
   resetFiltres(): void {
     this.search.set('');
-    this.dateDebut.set(null);
-    this.dateFin.set(null);
+    this.dateDebut.set(debutMoisCourant());
+    this.dateFin.set(finMoisCourant());
     this.page.set(1);
   }
 

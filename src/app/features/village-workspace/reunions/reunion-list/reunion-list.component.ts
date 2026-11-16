@@ -13,7 +13,7 @@ import { ErrorState } from '../../../../shared/components/error-state/error-stat
 import { Icon } from '../../../../shared/components/icon/icon.component';
 import { Pagination } from '../../../../shared/components/pagination/pagination.component';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton.component';
-import { dansPeriode } from '../../../../shared/utils/date-range';
+import { dansPeriode, debutMoisCourant, finMoisCourant } from '../../../../shared/utils/date-range';
 import { formatDateTime } from '../../../../shared/utils/format';
 import { ReunionFormDialog } from './reunion-form-dialog.component';
 
@@ -43,8 +43,8 @@ export class ReunionList {
   readonly aSupprimer = signal<Reunion | null>(null);
   readonly deleting = signal(false);
   readonly page = signal(1);
-  readonly dateDebut = signal<string | null>(null);
-  readonly dateFin = signal<string | null>(null);
+  readonly dateDebut = signal<string | null>(debutMoisCourant());
+  readonly dateFin = signal<string | null>(finMoisCourant());
 
   readonly reunionsTriees = computed(() =>
     [...this.reunions()].sort((a, b) => b.dateHeure.localeCompare(a.dateHeure)),
@@ -57,7 +57,7 @@ export class ReunionList {
     return debut || fin ? all.filter((r) => dansPeriode(r.dateHeure, debut, fin)) : all;
   });
 
-  readonly filtresActifs = computed(() => !!this.dateDebut() || !!this.dateFin());
+  readonly filtresActifs = computed(() => this.dateDebut() !== debutMoisCourant() || this.dateFin() !== finMoisCourant());
 
   readonly paged = computed(() => {
     const start = (this.page() - 1) * PAGE_SIZE;
@@ -84,8 +84,8 @@ export class ReunionList {
   }
 
   resetFiltres(): void {
-    this.dateDebut.set(null);
-    this.dateFin.set(null);
+    this.dateDebut.set(debutMoisCourant());
+    this.dateFin.set(finMoisCourant());
     this.page.set(1);
   }
 

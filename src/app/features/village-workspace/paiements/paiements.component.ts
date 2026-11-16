@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { NUMERO_MOIS_LABEL, Paiement, utilisateurNomComplet } from '../../../core/models';
+import { NUMERO_MOIS_LABEL, Paiement, Utilisateur, utilisateurNomComplet } from '../../../core/models';
 import { NotificationService } from '../../../core/services/notification';
 import { PaiementService } from '../../../core/services/paiement';
 import { RecuService } from '../../../core/services/recu';
+import { UtilisateurService } from '../../../core/services/utilisateur';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DateRangeFilter } from '../../../shared/components/date-range-filter/date-range-filter.component';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state.component';
@@ -13,7 +14,8 @@ import { ErrorState } from '../../../shared/components/error-state/error-state.c
 import { Icon } from '../../../shared/components/icon/icon.component';
 import { Pagination } from '../../../shared/components/pagination/pagination.component';
 import { Skeleton } from '../../../shared/components/skeleton/skeleton.component';
-import { dansPeriode } from '../../../shared/utils/date-range';
+import { dansPeriode, debutMoisCourant, finMoisCourant } from '../../../shared/utils/date-range';
+import { exportSectionsToExcel, exportSectionsToPdf } from '../../../shared/utils/export';
 import { formatDate, formatMontant } from '../../../shared/utils/format';
 import { PaiementFormDialog } from './paiement-form-dialog.component';
 
@@ -28,6 +30,7 @@ const PAGE_SIZE = 10;
 export class Paiements {
   private readonly paiementService = inject(PaiementService);
   private readonly recuService = inject(RecuService);
+  private readonly utilisateurService = inject(UtilisateurService);
   private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -37,12 +40,13 @@ export class Paiements {
 
   readonly PAGE_SIZE = PAGE_SIZE;
   readonly paiements = signal<Paiement[]>([]);
+  readonly membres = signal<Utilisateur[]>([]);
   readonly paiementIdsAvecRecu = signal<Set<number>>(new Set());
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly search = signal('');
-  readonly dateDebut = signal<string | null>(null);
-  readonly dateFin = signal<string | null>(null);
+  readonly dateDebut = signal<string | null>(debutMoisCourant());
+  readonly dateFin = signal<string | null>(finMoisCourant());
   readonly page = signal(1);
   readonly dialogOpen = signal(false);
   readonly aSupprimer = signal<Paiement | null>(null);
@@ -59,12 +63,14 @@ export class Paiements {
       all = all.filter((p) => this.nomComplet(p).toLowerCase().includes(term));
     }
     if (debut || fin) {
-      all = all.filter((p) => dansPeriode(p.datePaiement, debut, fin));
+      all = all.filter((p) => dansPeriode(this.periodeIso(p), debut, fin));
     }
     return all;
   });
 
-  readonly filtresActifs = computed(() => !!this.search() || !!this.dateDebut() || !!this.dateFin());
+  readonly filtresActifs = computed(
+    () => !!this.search() || this.dateDebut() !== debutMoisCourant() || this.dateFin() !== finMoisCourant(),
+  );
 
   readonly paged = computed(() => {
     const start = (this.page() - 1) * PAGE_SIZE;
@@ -95,6 +101,12 @@ export class Paiements {
     return `${NUMERO_MOIS_LABEL[p.mois]} ${p.annee}`;
   }
 
+  /** Date du 1er jour de la période (mois/année cotisés) — utilisée pour le filtre par plage de
+   *  dates, qui doit porter sur la période et non sur la date effective du paiement. */
+  private periodeIso(p: Paiement): string {
+    return `${p.annee}-${String(p.mois).padStart(2, '0')}-01`;
+  }
+
   montant(value: number): string {
     return formatMontant(value);
   }
@@ -121,8 +133,8 @@ export class Paiements {
 
   resetFiltres(): void {
     this.search.set('');
-    this.dateDebut.set(null);
-    this.dateFin.set(null);
+    this.dateDebut.set(debutMoisCourant());
+    this.dateFin.set(finMoisCourant());
     this.page.set(1);
   }
 
@@ -131,12 +143,14 @@ export class Paiements {
     this.error.set(false);
     this.selectionnes.set(new Set());
     try {
-      const [paiements, recus] = await Promise.all([
+      const [paiements, recus, membres] = await Promise.all([
         firstValueFrom(this.paiementService.findByVillage(this.villageIdNumber())),
         firstValueFrom(this.recuService.findByVillage(this.villageIdNumber())),
+        firstValueFrom(this.utilisateurService.findMembresDuVillage(this.villageIdNumber())),
       ]);
       this.paiements.set(paiements);
       this.paiementIdsAvecRecu.set(new Set(recus.flatMap((r) => r.paiements.map((p) => p.id))));
+      this.membres.set(membres);
     } catch {
       this.error.set(true);
     } finally {
@@ -190,6 +204,53 @@ export class Paiements {
     } finally {
       this.generationGroupeeEnCours.set(false);
     }
+  }
+
+  /** Membres du village sans paiement dans la liste actuellement filtrée (ex: sur la période
+   *  sélectionnée) — sert au second tableau de l'export ("n'ont pas payé"). */
+  private readonly nonPayes = computed(() => {
+    const idsPayeurs = new Set(this.filtered().map((p) => p.utilisateur.id));
+    return this.membres().filter((m) => !idsPayeurs.has(m.id));
+  });
+
+  private libellePeriodeExport(): string {
+    const debut = this.dateDebut();
+    const fin = this.dateFin();
+    if (!debut && !fin) {
+      return '';
+    }
+    const partie = (iso: string | null) => (iso ? this.date(iso) : '…');
+    return ` — ${partie(debut)} au ${partie(fin)}`;
+  }
+
+  private sectionsExport() {
+    const periode = this.libellePeriodeExport();
+    return [
+      {
+        title: `Paiements reçus${periode}`,
+        headers: ['Membre', 'Période', 'Montant (GNF)', 'Date de paiement', 'Statut'],
+        rows: this.filtered().map((p) => [
+          this.nomComplet(p),
+          this.periode(p),
+          p.montant,
+          this.date(p.datePaiement),
+          this.dejaQuittance(p) ? 'Quittancé' : 'Non quittancé',
+        ]),
+      },
+      {
+        title: `Membres n'ayant pas payé${periode}`,
+        headers: ['Membre', 'Téléphone'],
+        rows: this.nonPayes().map((m) => [utilisateurNomComplet(m), m.telephone]),
+      },
+    ];
+  }
+
+  async exporterExcel(): Promise<void> {
+    await exportSectionsToExcel('paiements', this.sectionsExport());
+  }
+
+  async exporterPdf(): Promise<void> {
+    await exportSectionsToPdf('paiements', 'Liste des paiements', this.sectionsExport());
   }
 
   async confirmerSuppression(p: Paiement): Promise<void> {

@@ -23,13 +23,25 @@
         </select>
       </div>
       <div class="filter-field filter-field-wide">
-        <label class="filter-label">Date</label>
+        <label class="filter-label">Période (mois cotisé)</label>
         <app-date-range-filter [from]="dateDebut()" [to]="dateFin()" (fromChange)="onDateDebut($event)" (toChange)="onDateFin($event)" />
       </div>
       <div class="filter-field">
         <button type="button" class="btn btn-secondary" (click)="resetFiltres()">
           <app-icon name="refresh-cw" [size]="14" />
           Réinitialiser
+        </button>
+      </div>
+      <div class="filter-field">
+        <button type="button" class="btn btn-secondary" (click)="exporterExcel()">
+          <app-icon name="download" [size]="14" />
+          Excel
+        </button>
+      </div>
+      <div class="filter-field">
+        <button type="button" class="btn btn-secondary" (click)="exporterPdf()">
+          <app-icon name="download" [size]="14" />
+          PDF
         </button>
       </div>
     </div>

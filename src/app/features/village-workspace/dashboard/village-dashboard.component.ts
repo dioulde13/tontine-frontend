@@ -9,6 +9,7 @@ import { ErrorState } from '../../../shared/components/error-state/error-state.c
 import { Icon } from '../../../shared/components/icon/icon.component';
 import { Skeleton } from '../../../shared/components/skeleton/skeleton.component';
 import { StatCard } from '../../../shared/components/stat-card/stat-card.component';
+import { debutMoisCourant, finMoisCourant } from '../../../shared/utils/date-range';
 import { formatDateTime, formatMontant } from '../../../shared/utils/format';
 
 @Component({
@@ -27,8 +28,8 @@ export class VillageDashboard {
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly stats = signal<PresidentDashboard | null>(null);
-  readonly dateDebut = signal<string | null>(null);
-  readonly dateFin = signal<string | null>(null);
+  readonly dateDebut = signal<string | null>(debutMoisCourant());
+  readonly dateFin = signal<string | null>(finMoisCourant());
 
   private readonly loadOnVillageChange = effect(() => {
     this.villageIdNumber();
@@ -62,8 +63,8 @@ export class VillageDashboard {
   }
 
   resetFiltres(): void {
-    this.dateDebut.set(null);
-    this.dateFin.set(null);
+    this.dateDebut.set(debutMoisCourant());
+    this.dateFin.set(finMoisCourant());
     this.load();
   }
 

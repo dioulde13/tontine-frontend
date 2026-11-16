@@ -12,7 +12,8 @@ import { ErrorState } from '../../../shared/components/error-state/error-state.c
 import { Icon } from '../../../shared/components/icon/icon.component';
 import { Pagination } from '../../../shared/components/pagination/pagination.component';
 import { Skeleton } from '../../../shared/components/skeleton/skeleton.component';
-import { dansPeriode } from '../../../shared/utils/date-range';
+import { dansPeriode, debutMoisCourant, finMoisCourant } from '../../../shared/utils/date-range';
+import { exportSectionsToExcel, exportSectionsToPdf } from '../../../shared/utils/export';
 import { formatDate, formatMontant } from '../../../shared/utils/format';
 import { PenaliteFormDialog } from './penalite-form-dialog.component';
 
@@ -38,8 +39,8 @@ export class Penalites {
   readonly error = signal(false);
   readonly search = signal('');
   readonly filtreStatut = signal<FiltreStatut>('TOUS');
-  readonly dateDebut = signal<string | null>(null);
-  readonly dateFin = signal<string | null>(null);
+  readonly dateDebut = signal<string | null>(debutMoisCourant());
+  readonly dateFin = signal<string | null>(finMoisCourant());
   readonly page = signal(1);
   readonly dialogOpen = signal(false);
   readonly aSupprimer = signal<Penalite | null>(null);
@@ -59,13 +60,17 @@ export class Penalites {
       all = all.filter((p) => p.statut === statut);
     }
     if (debut || fin) {
-      all = all.filter((p) => dansPeriode(p.date, debut, fin));
+      all = all.filter((p) => dansPeriode(this.periodeIso(p), debut, fin));
     }
     return all;
   });
 
   readonly filtresActifs = computed(
-    () => !!this.search() || this.filtreStatut() !== 'TOUS' || !!this.dateDebut() || !!this.dateFin(),
+    () =>
+      !!this.search() ||
+      this.filtreStatut() !== 'TOUS' ||
+      this.dateDebut() !== debutMoisCourant() ||
+      this.dateFin() !== finMoisCourant(),
   );
 
   readonly paged = computed(() => {
@@ -95,6 +100,16 @@ export class Penalites {
 
   statutVariant(p: Penalite): BadgeVariant {
     return p.statut === 'PAYEE' ? 'success' : 'warning';
+  }
+
+  /** Date du 1er jour de la période cotisée visée par la pénalité ; à défaut (type AUTRE, créée
+   *  manuellement sans période — voir PenaliteFormDialog), retombe sur sa date d'enregistrement. Sert
+   *  au filtre par plage de dates, qui doit porter sur la période et non la date d'enregistrement. */
+  private periodeIso(p: Penalite): string {
+    if (p.periodeMois === null || p.periodeAnnee === null) {
+      return p.date;
+    }
+    return `${p.periodeAnnee}-${String(p.periodeMois).padStart(2, '0')}-01`;
   }
 
   montant(value: number): string {
@@ -129,8 +144,8 @@ export class Penalites {
   resetFiltres(): void {
     this.search.set('');
     this.filtreStatut.set('TOUS');
-    this.dateDebut.set(null);
-    this.dateFin.set(null);
+    this.dateDebut.set(debutMoisCourant());
+    this.dateFin.set(finMoisCourant());
     this.page.set(1);
   }
 
@@ -161,6 +176,46 @@ export class Penalites {
     } finally {
       this.payerEnCours.set(null);
     }
+  }
+
+  private libellePeriodeExport(): string {
+    const debut = this.dateDebut();
+    const fin = this.dateFin();
+    if (!debut && !fin) {
+      return '';
+    }
+    const partie = (iso: string | null) => (iso ? this.date(iso) : '…');
+    return ` — ${partie(debut)} au ${partie(fin)}`;
+  }
+
+  private ligneExport(p: Penalite): (string | number)[] {
+    return [this.nomComplet(p), this.typeLabel(p), this.periode(p), p.montant, this.date(p.date)];
+  }
+
+  private sectionsExport() {
+    const periode = this.libellePeriodeExport();
+    const headers = ['Membre', 'Type', 'Période', 'Montant (GNF)', 'Date'];
+    const toutes = this.filtered();
+    return [
+      {
+        title: `Pénalités payées${periode}`,
+        headers,
+        rows: toutes.filter((p) => p.statut === 'PAYEE').map((p) => this.ligneExport(p)),
+      },
+      {
+        title: `Pénalités non payées${periode}`,
+        headers,
+        rows: toutes.filter((p) => p.statut === 'NON_PAYEE').map((p) => this.ligneExport(p)),
+      },
+    ];
+  }
+
+  async exporterExcel(): Promise<void> {
+    await exportSectionsToExcel('penalites', this.sectionsExport());
+  }
+
+  async exporterPdf(): Promise<void> {
+    await exportSectionsToPdf('penalites', 'Liste des pénalités', this.sectionsExport());
   }
 
   async confirmerSuppression(p: Penalite): Promise<void> {
