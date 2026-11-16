@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
 import { TypeMouvementCaisse } from '../../../core/models';
@@ -15,7 +16,7 @@ import { Skeleton } from '../../../shared/components/skeleton/skeleton.component
  */
 @Component({
   selector: 'app-types-depenses-dialog',
-  imports: [Icon, Modal, Skeleton, ConfirmDialog],
+  imports: [Icon, Modal, Skeleton, ConfirmDialog, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './types-depenses-dialog.component.html',
   styleUrl: './types-depenses-dialog.component.css',

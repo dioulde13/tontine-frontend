@@ -7,6 +7,7 @@ import { DepenseService } from '../../../core/services/depense';
 import { NotificationService } from '../../../core/services/notification';
 import { TypeMouvementCaisseService } from '../../../core/services/type-mouvement-caisse';
 import { Modal } from '../../../shared/components/modal/modal.component';
+import { MontantInput } from '../../../shared/directives/montant-input';
 
 /**
  * Pas de type pré-rempli (ni "Mariage", ni "Baptême"...) : le backend refuse toute dépense dont le
@@ -15,7 +16,7 @@ import { Modal } from '../../../shared/components/modal/modal.component';
  */
 @Component({
   selector: 'app-depense-form-dialog',
-  imports: [ReactiveFormsModule, Modal],
+  imports: [ReactiveFormsModule, Modal, MontantInput],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './depense-form-dialog.component.html',
 })

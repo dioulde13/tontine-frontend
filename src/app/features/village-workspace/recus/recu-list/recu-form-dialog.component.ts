@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
 import { NUMERO_MOIS_LABEL, Paiement, Recu, utilisateurNomComplet } from '../../../../core/models';
@@ -10,7 +11,7 @@ import { formatMontant } from '../../../../shared/utils/format';
 
 @Component({
   selector: 'app-recu-form-dialog',
-  imports: [Modal],
+  imports: [Modal, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recu-form-dialog.component.html',
   styleUrl: './recu-form-dialog.component.css',

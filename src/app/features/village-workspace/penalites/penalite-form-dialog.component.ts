@@ -8,6 +8,7 @@ import { PenaliteService } from '../../../core/services/penalite';
 import { UtilisateurService } from '../../../core/services/utilisateur';
 import { AutocompleteSelect } from '../../../shared/components/autocomplete-select/autocomplete-select.component';
 import { Modal } from '../../../shared/components/modal/modal.component';
+import { MontantInput } from '../../../shared/directives/montant-input';
 
 /**
  * Le backend refuse (400) toute création manuelle de type RETARD_PAIEMENT ou ABSENCE_REUNION
@@ -15,7 +16,7 @@ import { Modal } from '../../../shared/components/modal/modal.component';
  */
 @Component({
   selector: 'app-penalite-form-dialog',
-  imports: [ReactiveFormsModule, Modal, AutocompleteSelect],
+  imports: [ReactiveFormsModule, Modal, AutocompleteSelect, MontantInput],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './penalite-form-dialog.component.html',
 })
