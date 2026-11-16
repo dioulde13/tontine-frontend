@@ -38,3 +38,31 @@
     .section-label:not(:first-child) {
       margin-top: 28px;
     }
+
+    .annee-switch {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--color-surface-muted);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+    }
+    .annee-switch-option {
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 7px 16px;
+      border-radius: calc(var(--radius) - 3px);
+      cursor: pointer;
+      transition: background-color 0.15s, color 0.15s;
+    }
+    .annee-switch-option:hover {
+      color: var(--color-text);
+    }
+    .annee-switch-option.active {
+      background: var(--color-primary);
+      color: #ffffff;
+    }

@@ -30,12 +30,19 @@
       } @else if (data(); as d) {
         <div class="filter-card">
           <div class="filter-field">
-            <label class="filter-label" for="annee">Année</label>
-            <select id="annee" class="select" [value]="annee()" (change)="onAnnee($event)">
+            <span class="filter-label">Année</span>
+            <div class="annee-switch" role="group" aria-label="Choisir l'année">
               @for (a of anneesDisponibles(); track a) {
-                <option [value]="a">{{ a }}</option>
+                <button
+                  type="button"
+                  class="annee-switch-option"
+                  [class.active]="a === annee()"
+                  (click)="onAnnee(a)"
+                >
+                  {{ a }}
+                </button>
               }
-            </select>
+            </div>
           </div>
         </div>
 

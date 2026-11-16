@@ -108,8 +108,8 @@ export class MembreCotisations implements OnInit {
     return p.statut === 'PAYEE' ? 'success' : 'warning';
   }
 
-  onAnnee(event: Event): void {
-    this.annee.set(Number((event.target as HTMLSelectElement).value));
+  onAnnee(annee: number): void {
+    this.annee.set(annee);
     this.load();
   }
 

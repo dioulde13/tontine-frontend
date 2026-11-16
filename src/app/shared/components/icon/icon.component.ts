@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 export type IconName =
   | 'dashboard' | 'village' | 'buildings' | 'users' | 'user' | 'user-plus'
-  | 'wallet' | 'alert-triangle' | 'receipt' | 'calendar' | 'calendar-check'
+  | 'wallet' | 'cash' | 'alert-triangle' | 'receipt' | 'calendar' | 'calendar-check'
   | 'clipboard-check' | 'sliders' | 'shield' | 'log-in' | 'log-out'
   | 'search' | 'filter' | 'plus' | 'pencil' | 'trash' | 'check' | 'check-circle'
   | 'x' | 'x-circle' | 'chevron-down' | 'chevron-right' | 'chevron-left'

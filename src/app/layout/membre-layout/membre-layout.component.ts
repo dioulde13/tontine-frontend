@@ -11,7 +11,7 @@ const SECTIONS: NavSection[] = [
   {
     items: [
       { label: 'Tableau de bord', icon: 'dashboard', route: '/membre/dashboard' },
-      { label: 'Mes cotisations', icon: 'wallet', route: '/membre/cotisations' },
+      { label: 'Mes cotisations', icon: 'cash', route: '/membre/cotisations' },
       { label: 'Mon profil', icon: 'user', route: '/membre/profil' },
     ],
   },
