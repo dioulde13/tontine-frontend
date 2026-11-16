@@ -8,7 +8,7 @@ export type IconName =
   | 'x' | 'x-circle' | 'chevron-down' | 'chevron-right' | 'chevron-left'
   | 'menu' | 'bell' | 'eye' | 'eye-off' | 'download' | 'printer' | 'arrow-left'
   | 'more-vertical' | 'inbox' | 'alert-circle' | 'refresh-cw' | 'lock' | 'mail' | 'phone'
-  | 'file-text' | 'list' | 'chevrons-left' | 'chevrons-right';
+  | 'file-text' | 'list' | 'chevrons-left' | 'chevrons-right' | 'trending-down';
 
 /** Jeu d'icônes inline (style trait, 24x24, cohérent sur toute l'application — jamais d'emoji). */
 @Component({

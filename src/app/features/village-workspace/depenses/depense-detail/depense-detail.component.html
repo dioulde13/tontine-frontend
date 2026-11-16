@@ -1,0 +1,78 @@
+    <div class="depense-toolbar no-print">
+      <a [routerLink]="['..']" class="workspace-back-link">
+        <app-icon name="arrow-left" [size]="14" />
+        Retour aux dépenses
+      </a>
+      @if (depense()) {
+        <button type="button" class="btn btn-secondary" (click)="imprimer()">
+          <app-icon name="printer" [size]="16" />
+          Imprimer
+        </button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="card card-pad"><app-skeleton [rows]="5" [cols]="2" /></div>
+    } @else if (error()) {
+      <div class="card"><app-error-state (retry)="load()" /></div>
+    } @else if (depense(); as d) {
+      <div class="receipt card">
+        <div class="receipt-header">
+          <div class="receipt-brand-block">
+            <div class="receipt-logo">
+              <app-icon name="village" [size]="20" />
+            </div>
+            <div>
+              <p class="receipt-brand">Cotisation</p>
+              <p class="receipt-brand-tagline">Gestion des tontines villageoises</p>
+            </div>
+          </div>
+          <div class="receipt-numero">
+            <p class="receipt-numero-label">N° de reçu</p>
+            <p class="font-mono receipt-numero-value">{{ d.numeroRecu }}</p>
+            <p class="receipt-numero-date">Émis le {{ date(d.dateEmissionRecu) }}</p>
+          </div>
+        </div>
+
+        <div class="receipt-ornament" aria-hidden="true"><span></span><span></span><span></span></div>
+
+        <div class="receipt-title-block">
+          <h3 class="receipt-title">REÇU DE DÉPENSE</h3>
+          <p class="receipt-subtitle">Village de {{ nomVillage() }}</p>
+        </div>
+
+        <p class="receipt-declaration">
+          Je soussigné(e)
+          @if (nomPresident(); as president) {
+            <strong>{{ president }}</strong>,
+          } @else {
+            <strong>le Président</strong> du village de {{ nomVillage() }},
+          }
+          certifie avoir réglé sur la caisse du village la somme de
+          <strong>{{ montant(d.montant) }}</strong> ({{ montantLettres(d.montant) }}),
+          au titre de <strong>{{ d.type.libelle }}</strong>@if (d.motif) {, {{ d.motif }}}, le {{ date(d.date) }}.
+        </p>
+
+        <p class="receipt-closing">Le présent reçu est établi pour servir et valoir ce que de droit.</p>
+
+        <p class="receipt-fait">Fait à {{ nomVillage() }}, le {{ date(d.dateEmissionRecu) }}.</p>
+
+        <div class="receipt-signatures">
+          <div class="receipt-signature">
+            <p class="receipt-signature-role">Le Président</p>
+            @if (nomPresident(); as president) {
+              <p class="receipt-signature-name">{{ president }}</p>
+            }
+            <div class="receipt-signature-line"></div>
+          </div>
+          <div class="receipt-signature">
+            <p class="receipt-signature-role">Bénéficiaire</p>
+            <div class="receipt-signature-line"></div>
+          </div>
+        </div>
+
+        <p class="receipt-footer-audit">
+          Document généré automatiquement le {{ dateTime(d.creeLe) }}{{ genereParLabel(d) }}.
+        </p>
+      </div>
+    }

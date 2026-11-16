@@ -32,7 +32,9 @@ export interface PresidentDashboard {
   montantTotalPenalitesNonPayees: number;
   /** Toutes les pénalités (payées + non payées), contrairement à montantTotalPenalitesNonPayees ci-dessus. */
   montantTotalPenalites: number;
-  /** Argent réellement collecté par le village : paiements + pénalités déjà payées. */
+  /** Total des sorties d'argent (Depense) enregistrées sur la période. */
+  montantTotalDepenses: number;
+  /** Solde réel de la caisse : paiements + pénalités déjà payées, moins les dépenses. */
   montantCaisse: number;
   nombreReunions: number;
   /** null si aucune réunion n'est planifiée dans le futur. */

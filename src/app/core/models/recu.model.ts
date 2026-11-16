@@ -8,6 +8,12 @@ export interface Recu {
   /** ISO-8601 LocalDate */
   dateEmission: string;
   paiements: Paiement[];
+  /** ISO-8601 LocalDateTime. Un reçu n'est jamais modifié après génération (pas de "modifié le/par"). */
+  creeLe: string;
+  /** Téléphone du président qui a généré ce reçu ; null si généré hors contexte authentifié. */
+  creePar: string | null;
+  /** Nom complet résolu depuis creePar ; null si creePar est null ou ne correspond plus à personne. */
+  creeParNom: string | null;
 }
 
 export interface CreateRecuRequest {

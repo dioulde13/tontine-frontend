@@ -1,0 +1,44 @@
+    <app-modal title="Nouvelle dépense" size="md" (closed)="closed.emit()">
+      @if (loadingTypes()) {
+        <p class="field-hint">Chargement des types de dépense…</p>
+      } @else if (aucunType()) {
+        <div class="stack" style="gap: 12px;">
+          <p class="field-hint">Aucun type de dépense n'est encore configuré pour ce village.</p>
+          <button type="button" class="btn btn-secondary" (click)="gererTypes.emit()">
+            Configurer un type de dépense
+          </button>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" id="depense-form" class="form-grid">
+          <div class="field field-full">
+            <label class="field-label" for="typeId">Type de dépense<span class="required">*</span></label>
+            <select id="typeId" class="select" formControlName="typeId">
+              <option [ngValue]="null" disabled>Sélectionner…</option>
+              @for (t of types(); track t.id) {
+                <option [ngValue]="t.id">{{ t.libelle }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label" for="montant">Montant (GNF)<span class="required">*</span></label>
+            <input id="montant" type="number" min="0.01" step="1" class="input" formControlName="montant" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="date">Date<span class="required">*</span></label>
+            <input id="date" type="date" class="input" formControlName="date" />
+          </div>
+          <div class="field field-full">
+            <label class="field-label" for="motif">Motif (optionnel)</label>
+            <input id="motif" type="text" class="input" formControlName="motif" placeholder="Ex: Mariage de Fatoumata Camara" />
+          </div>
+        </form>
+      }
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Annuler</button>
+        @if (!loadingTypes() && !aucunType()) {
+          <button type="submit" form="depense-form" class="btn btn-primary" [disabled]="form.invalid || saving()">
+            {{ saving() ? 'Enregistrement…' : 'Enregistrer' }}
+          </button>
+        }
+      </div>
+    </app-modal>

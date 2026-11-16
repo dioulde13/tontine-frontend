@@ -8,7 +8,7 @@ import { RecuService } from '../../../../core/services/recu';
 import { ErrorState } from '../../../../shared/components/error-state/error-state.component';
 import { Icon } from '../../../../shared/components/icon/icon.component';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton.component';
-import { formatDate, formatMontant } from '../../../../shared/utils/format';
+import { formatDate, formatDateTime, formatMontant } from '../../../../shared/utils/format';
 import { montantEnLettres } from '../../../../shared/utils/nombre-en-lettres';
 
 @Component({
@@ -76,6 +76,16 @@ export class RecuDetail {
 
   date(iso: string): string {
     return formatDate(iso);
+  }
+
+  dateTime(iso: string): string {
+    return formatDateTime(iso);
+  }
+
+  /** Préfère le nom résolu (creeParNom) ; retombe sur le téléphone brut (creePar) si inconnu. */
+  genereParLabel(r: Recu): string {
+    const qui = r.creeParNom ?? r.creePar;
+    return qui ? ` par ${qui}` : '';
   }
 
   async load(): Promise<void> {

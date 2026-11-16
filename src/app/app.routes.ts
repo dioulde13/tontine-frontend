@@ -60,6 +60,19 @@ const villageWorkspaceChildren: Routes = [
       import('./features/village-workspace/recus/recu-detail/recu-detail.component').then((m) => m.RecuDetail),
     data: { title: 'Reçu' },
   },
+  {
+    path: 'depenses',
+    loadComponent: () => import('./features/village-workspace/depenses/depenses.component').then((m) => m.Depenses),
+    data: { title: 'Dépenses' },
+  },
+  {
+    path: 'depenses/:depenseId',
+    loadComponent: () =>
+      import('./features/village-workspace/depenses/depense-detail/depense-detail.component').then(
+        (m) => m.DepenseDetail,
+      ),
+    data: { title: 'Reçu de dépense' },
+  },
 ];
 
 export const routes: Routes = [

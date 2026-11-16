@@ -24,6 +24,7 @@ const TABS: Tab[] = [
   { label: 'Paiements', icon: 'wallet', route: 'paiements' },
   { label: 'Pénalités', icon: 'alert-triangle', route: 'penalites' },
   { label: 'Reçus', icon: 'receipt', route: 'recus' },
+  { label: 'Dépenses', icon: 'trending-down', route: 'depenses' },
 ];
 
 /**

@@ -40,12 +40,13 @@
           [hint]="montant(s.montantTotalPenalitesNonPayees)"
         />
         <app-stat-card label="Montant total des pénalités" [value]="montant(s.montantTotalPenalites)" icon="shield" tone="primary" />
+        <app-stat-card label="Dépenses" [value]="montant(s.montantTotalDepenses)" icon="trending-down" tone="warning" />
         <app-stat-card
           label="Total en caisse"
           [value]="montant(s.montantCaisse)"
           icon="wallet"
           tone="success"
-          hint="Paiements + pénalités payées"
+          hint="Paiements + pénalités payées − dépenses"
         />
         <app-stat-card
           label="Cotisation mensuelle"

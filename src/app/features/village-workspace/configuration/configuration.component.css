@@ -14,8 +14,13 @@
       margin-bottom: 4px;
     }
     .config-subtitle {
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       line-height: 1.6;
+    }
+    .config-audit {
+      margin-bottom: 20px;
+      font-size: 11.5px;
+      color: var(--color-text-subtle);
     }
     @media (max-width: 640px) {
       .config-wrap {

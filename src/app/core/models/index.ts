@@ -8,5 +8,7 @@ export * from './presence.model';
 export * from './paiement.model';
 export * from './penalite.model';
 export * from './recu.model';
+export * from './type-mouvement-caisse.model';
+export * from './depense.model';
 export * from './dashboard.model';
 export * from './api-error.model';

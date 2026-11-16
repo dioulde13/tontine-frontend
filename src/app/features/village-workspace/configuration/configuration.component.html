@@ -14,6 +14,11 @@
               pénalités (utilisés automatiquement pour chaque calcul).
             }
           </p>
+          @if (config()?.modifieLe; as modifieLe) {
+            <p class="config-audit">
+              Dernière modification{{ modifieParLabel() }} le {{ dateTime(modifieLe) }}.
+            </p>
+          }
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="stack" style="gap: 16px;">
             <div class="field">

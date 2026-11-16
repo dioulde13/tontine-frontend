@@ -1,0 +1,71 @@
+    <app-modal title="Types de dépense" size="md" (closed)="closed.emit()">
+      <div class="stack" style="gap: 16px;">
+        <form class="type-add-row" (ngSubmit)="ajouter()">
+          <input
+            type="text"
+            class="input"
+            placeholder="Nouveau type (ex: Mariage)"
+            [value]="nouveauLibelle()"
+            (input)="onNouveauLibelle($event)"
+          />
+          <button type="submit" class="btn btn-primary btn-sm" [disabled]="!nouveauLibelle().trim() || ajoutEnCours()">
+            <app-icon name="plus" [size]="14" />
+            Ajouter
+          </button>
+        </form>
+
+        @if (loading()) {
+          <app-skeleton [rows]="3" [cols]="1" />
+        } @else if (types().length === 0) {
+          <p class="field-hint">Aucun type de dépense configuré pour l'instant. Ajoutez-en un ci-dessus.</p>
+        } @else {
+          <ul class="type-list">
+            @for (t of types(); track t.id) {
+              <li class="type-row">
+                @if (editingId() === t.id) {
+                  <input type="text" class="input" [value]="editValue()" (input)="onEditValue($event)" />
+                  <div class="table-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" [disabled]="editEnCours()" (click)="annulerEdition()">
+                      Annuler
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm"
+                      [disabled]="!editValue().trim() || editEnCours()"
+                      (click)="validerEdition(t)"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                } @else {
+                  <span class="type-libelle">{{ t.libelle }}</span>
+                  <div class="table-actions">
+                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="commencerEdition(t)" aria-label="Modifier">
+                      <app-icon name="pencil" [size]="14" />
+                    </button>
+                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="aSupprimer.set(t)" aria-label="Supprimer">
+                      <app-icon name="trash" [size]="14" />
+                    </button>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      <div modalFooter>
+        <button type="button" class="btn btn-secondary" (click)="closed.emit()">Fermer</button>
+      </div>
+    </app-modal>
+
+    @if (aSupprimer(); as t) {
+      <app-confirm-dialog
+        title="Supprimer le type"
+        [message]="'Supprimer le type &quot;' + t.libelle + '&quot; ? Cette action est irréversible et échouera si des dépenses l\'utilisent encore.'"
+        confirmLabel="Supprimer"
+        [loading]="suppressionEnCours()"
+        (cancelled)="aSupprimer.set(null)"
+        (confirmed)="confirmerSuppression(t)"
+      />
+    }

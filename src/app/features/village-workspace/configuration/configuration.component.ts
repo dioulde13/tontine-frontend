@@ -8,6 +8,7 @@ import { ConfigurationVillageService } from '../../../core/services/configuratio
 import { NotificationService } from '../../../core/services/notification';
 import { ErrorState } from '../../../shared/components/error-state/error-state.component';
 import { Skeleton } from '../../../shared/components/skeleton/skeleton.component';
+import { formatDateTime } from '../../../shared/utils/format';
 
 @Component({
   selector: 'app-configuration',
@@ -40,6 +41,17 @@ export class Configuration {
     this.villageIdNumber();
     this.load();
   });
+
+  dateTime(iso: string): string {
+    return formatDateTime(iso);
+  }
+
+  /** Préfère le nom résolu (modifieParNom) ; retombe sur le téléphone brut (modifiePar) si inconnu. */
+  modifieParLabel(): string {
+    const config = this.config();
+    const qui = config?.modifieParNom ?? config?.modifiePar;
+    return qui ? ` par ${qui}` : '';
+  }
 
   async load(): Promise<void> {
     this.loading.set(true);
